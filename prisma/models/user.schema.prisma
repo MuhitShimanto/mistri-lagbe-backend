@@ -2,6 +2,7 @@ model User {
   id String @id @default(uuid())
 
   name     String
+  // email should be in lowercase and unique
   email    String  @unique
   phone    String? @unique
   password String

@@ -1,15 +1,20 @@
 import type { Request, Response, NextFunction } from "express";
-import { ZodType } from "zod";
-
+import type { ZodType } from "zod";
 
 const validateRequest =
-  (schema: ZodType) =>
-  (req: Request, res: Response, next: NextFunction) => {
+  <T>(schema: ZodType<T>) =>
+  (
+    req: Request,
+    _res: Response,
+    next: NextFunction,
+  ) => {
     try {
-      schema.parse({
+      req.validated = schema.parse({
         body: req.body,
         params: req.params,
         query: req.query,
+        user: req.user,
+        cookies: req.cookies,
       });
 
       next();
@@ -17,6 +22,5 @@ const validateRequest =
       next(error);
     }
   };
-
 
 export default validateRequest;

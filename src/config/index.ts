@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import type { SignOptions } from 'jsonwebtoken';
 
 dotenv.config({
   path: '.env',
@@ -25,10 +26,11 @@ const config = {
   // ==================================================
   jwt: {
     secret: requireEnv('JWT_SECRET'),
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    expiresIn: (process.env.JWT_EXPIRES_IN ?? "7d") as SignOptions["expiresIn"],
 
     refreshSecret: requireEnv('JWT_REFRESH_SECRET'),
-    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '30d',
+    refreshExpiresIn: (process.env.JWT_REFRESH_EXPIRES_IN ?? "30d") as SignOptions["expiresIn"],
+    refreshMaxAge: Number(process.env.JWT_REFRESH_MAX_AGE) || 30,
   },
 
   // ==================================================
