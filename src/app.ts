@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import express, { type Application, type Request, type Response } from "express";
 import globalErrorHandler from "./middlewares/error.middleware.js";
 import authRouter from "./modules/auth/auth.route.js";
+import categoryRoute from "./modules/category/category.route.js";
 
 
 const app: Application = express();
@@ -23,6 +24,7 @@ app.get("/", (_req: Request, res: Response) => {
 
 // Application Routes
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/categories", categoryRoute);
 
 // 404 Handler
 app.use((_req: Request, res: Response) => {

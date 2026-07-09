@@ -19,7 +19,6 @@ export const createCategorySchema = z.object({
 
 
     image: z
-      .string()
       .url("Image must be a valid URL")
       .optional(),
 
@@ -44,7 +43,6 @@ export const updateCategorySchema = z.object({
 
 
     image: z
-      .string()
       .url("Image must be a valid URL")
       .optional(),
 
