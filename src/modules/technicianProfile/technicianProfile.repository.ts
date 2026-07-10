@@ -1,6 +1,7 @@
 import prisma from "../../config/db.js";
 import type {
   CreateTechnicianProfileInput,
+  GetAllTechnicianProfilesInput,
   UpdateAvailabilityInput,
   UpdateTechnicianProfileInput,
 } from "./technicianProfile.validation.js";
@@ -47,6 +48,46 @@ class TechnicianProfileRepository {
       },
     });
     return technicianProfile?.id || null;
+  }
+  async getAllTechnicianProfiles(params: GetAllTechnicianProfilesInput) {
+    const { sortBy, location, category, isAvailable } = params;
+
+    return prisma.technicianProfile.findMany({
+      where: {
+        ...(location && {
+          location: {
+            contains: location,
+            mode: "insensitive",
+          },
+        }),
+
+        ...(isAvailable !== undefined && {
+          isAvailable,
+        }),
+
+        ...(category && {
+          services: {
+            some: {
+              category: {
+                name: category,
+              },
+            },
+          },
+        }),
+      },
+
+      orderBy: sortBy
+        ? {
+            [sortBy]: "desc",
+          }
+        : {
+            createdAt: "desc",
+          },
+
+      include: {
+        user: true,
+      },
+    });
   }
 }
 

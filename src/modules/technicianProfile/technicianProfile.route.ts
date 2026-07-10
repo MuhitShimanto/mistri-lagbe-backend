@@ -5,6 +5,10 @@ import technicianProfileController from "./technicianProfile.controller.js";
 
 const technicianProfileRouter = Router();
 
+technicianProfileRouter.get(
+  "/",
+  technicianProfileController.getAllTechnicianProfile,
+)
 technicianProfileRouter.put(
   "/",
   authMiddleware(Role.TECHNICIAN),

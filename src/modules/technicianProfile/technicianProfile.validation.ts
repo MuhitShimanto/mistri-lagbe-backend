@@ -92,3 +92,10 @@ export type UpdateTechnicianProfileInput = z.infer<
 export type UpdateAvailabilityInput = z.infer<
   typeof updateAvailabilitySchema
 > & { id: string };
+
+export type GetAllTechnicianProfilesInput = {
+  sortBy?: "createdAt" | "updatedAt" | "experience" | "hourlyRate";
+  location?: string;
+  category?: string;
+  isAvailable?: boolean;
+}

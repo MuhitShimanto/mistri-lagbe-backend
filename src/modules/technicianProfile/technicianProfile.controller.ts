@@ -28,6 +28,15 @@ class TechnicianProfileController {
       data: result,
     });
   }
+  getAllTechnicianProfile = async (req: Request, res: Response) => {
+    const result = await technicianProfileService.getAllTechnicianProfile(req.params);
+
+    res.status(200).json({
+      success: true,
+      message: "Technician profiles retrieved successfully",
+      data: result,
+    });
+  }
 }
 
 export default new TechnicianProfileController();
