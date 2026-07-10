@@ -15,7 +15,6 @@ class TechnicianProfileController {
       data: result,
     });
   };
-
   updateAvailability = async (req: Request, res: Response) => {
     const result = await technicianProfileService.updateAvailability({
         ...req.body,

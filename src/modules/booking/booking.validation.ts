@@ -1,77 +1,42 @@
 import { z } from "zod";
-
+import { BookingStatus } from "../../generated/prisma/browser.js";
 
 export const createBookingSchema = z.object({
   body: z.object({
+    technicianId: z.string(),
 
-    serviceId: z
-      .string({
-        error: "Service ID is required",
-      })
-      .uuid("Invalid service ID"),
+    serviceId: z.string(),
 
+    bookingDate: z.coerce.date(),
 
-    technicianId: z
-      .string({
-        error: "Technician ID is required",
-      })
-      .uuid("Invalid technician ID"),
+    address: z.string().trim().min(5).max(255),
 
-
-    bookingDate: z
-      .string({
-        error: "Booking date is required",
-      })
-      .datetime("Invalid booking date format"),
-
-
-    address: z
-      .string({
-        error: "Address is required",
-      })
-      .min(5, "Address must be at least 5 characters")
-      .max(255, "Address cannot exceed 255 characters"),
-
-
-    note: z
-      .string()
-      .max(500, "Note cannot exceed 500 characters")
-      .optional(),
-
+    note: z.string().trim().max(1000).optional(),
   }),
 });
-
 
 export const updateBookingSchema = z.object({
+  params: z.object({
+    id: z.string("Invalid booking ID"),
+  }),
+
   body: z.object({
+    customerId: z.string().optional(),
 
-    bookingDate: z
-      .string()
-      .datetime("Invalid booking date format")
-      .optional(),
+    technicianId: z.string().optional(),
 
+    serviceId: z.string().optional(),
 
-    address: z
-      .string()
-      .min(5)
-      .max(255)
-      .optional(),
+    bookingDate: z.coerce.date().optional(),
 
+    address: z.string().trim().min(5).max(255).optional(),
 
-    note: z
-      .string()
-      .max(500)
-      .optional(),
+    note: z.string().trim().max(1000).optional(),
 
+    status: z.enum(BookingStatus).optional(),
   }),
 });
 
+export type CreateBookingInput = z.infer<typeof createBookingSchema>["body"];
 
-export type CreateBookingInput = z.infer<
-  typeof createBookingSchema
->;
-
-
-export type UpdateBookingInput = z.infer<
-  typeof updateBookingSchema
->;
+export type UpdateBookingInput = z.infer<typeof updateBookingSchema>;

@@ -85,6 +85,14 @@ class serviceRepository {
     });
     return result;
   }
+  async getServiceById(id: string) {
+    const result = await prisma.service.findUnique({
+      where: {
+        id,
+      },
+    });
+    return result;
+  }
 }
 
 export default new serviceRepository();
