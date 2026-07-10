@@ -86,9 +86,9 @@ export type CreateTechnicianProfileInput = z.infer<
 
 export type UpdateTechnicianProfileInput = z.infer<
   typeof updateTechnicianProfileSchema
->;
+> & { id: string };
 
 
 export type UpdateAvailabilityInput = z.infer<
   typeof updateAvailabilitySchema
->;
+> & { id: string };

@@ -1,0 +1,27 @@
+import type { Request } from "express";
+import serviceRepository from "./service.repository.js";
+import type { CreateServiceInput, GetServiceInput } from "./service.validation.js";
+import technicianProfileRepository from "../technicianProfile/technicianProfile.repository.js";
+
+class serviceService {
+    getAllServices = async (data: GetServiceInput) => {
+        const result = await serviceRepository.getAllServices(data);
+        return result;
+    }
+    createService = async (data: Request) => {
+        const body = data.body;
+        const userId = data.user?.id;
+        if (!userId) {
+            throw new Error("Unauthorized");
+        }
+        // Find technician Id based on the user Id
+        const technicianId = await technicianProfileRepository.findTechnicianIdByUserId(userId);
+        if (!technicianId) {
+            throw new Error("Unauthorized");
+        }
+        const result = await serviceRepository.createService({ ...body, technicianId });
+        return result;
+    }
+}
+
+export default new serviceService();

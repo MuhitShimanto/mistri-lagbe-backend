@@ -79,12 +79,27 @@ export const updateServiceSchema = z.object({
   }),
 });
 
+export const getServiceSchema = z.object({
+  params: z.object({
+    sortBy: z.string().optional(),
+    order: z.enum(["asc", "desc"]).optional(),
+    page: z.number().int().positive().optional(),
+    limit: z.number().int().positive().optional(),
+    category: z.enum(["service", "product"]).optional(),
+    location: z.string().optional(),
+    rating: z.number().int().min(1).max(5).optional(),
+  })
+})
 
 export type CreateServiceInput = z.infer<
   typeof createServiceSchema
->;
+>["body"] & { technicianId: string };
 
 
 export type UpdateServiceInput = z.infer<
   typeof updateServiceSchema
+>;
+
+export type GetServiceInput = z.infer<
+  typeof getServiceSchema
 >;

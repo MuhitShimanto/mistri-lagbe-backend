@@ -8,6 +8,7 @@ import config from "../../config/index.js";
 import type { User } from "../../generated/prisma/client.js";
 import ApiError from "../../utils/ApiError.js";
 import { email } from "zod";
+import technicianProfileRepository from "../technicianProfile/technicianProfile.repository.js";
 
 class AuthService {
   async register(payload: User) {
@@ -26,6 +27,9 @@ class AuthService {
       ...payload,
       password: hashedPassword,
     });
+
+    // If role is technician, create a technician profile
+    const technicianProfile = await technicianProfileRepository.createTechnicianProfile(user.id);
 
     /**
      * Never return password hash.

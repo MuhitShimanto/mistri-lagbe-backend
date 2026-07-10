@@ -5,16 +5,21 @@ import categoryController from "./category.controller.js";
 import validateRequest from "../../middlewares/validate.middleware.js";
 import { createCategorySchema } from "./category.validation.js";
 
-const categoryRoute = Router();
+const categoryRouter = Router();
 
 // Admin Routes
-categoryRoute.post(
+categoryRouter.post(
   "/",
   authMiddleware(Role.ADMIN),
   validateRequest(createCategorySchema),
   categoryController.createCategory,
 );
+categoryRouter.get(
+  "/",
+  authMiddleware(Role.ADMIN),
+  categoryController.getAllCategories,
+);
 
 // User Routes
 
-export default categoryRoute;
+export default categoryRouter;
