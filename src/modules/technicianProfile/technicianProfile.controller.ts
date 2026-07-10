@@ -45,6 +45,15 @@ class TechnicianProfileController {
       data: result,
     });
   }
+  getIncomingBookingRequests = async (req: Request, res: Response) => {
+    const result = await technicianProfileService.getIncomingBookingRequests(req.user?.id as string);
+
+    res.status(200).json({
+      success: true,
+      message: "Incoming booking requests retrieved successfully",
+      data: result,
+    });
+  }
 }
 
 export default new TechnicianProfileController();

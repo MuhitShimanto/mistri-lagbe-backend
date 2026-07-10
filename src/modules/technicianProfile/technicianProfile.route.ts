@@ -1,31 +1,28 @@
-import { Router } from "express";
-import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { Role } from "../../generated/prisma/enums.js";
-import technicianProfileController from "./technicianProfile.controller.js";
+import { Router } from 'express';
+import { authMiddleware } from '../../middlewares/auth.middleware.js';
+import { Role } from '../../generated/prisma/enums.js';
+import technicianProfileController from './technicianProfile.controller.js';
 
 const technicianProfileRouter = Router();
 
-// Technician Single Profile
+// Technician Read Own Incoming Booking Requests
 technicianProfileRouter.get(
-  "/:id",
-  technicianProfileController.getTechnicianProfileById,
-)
-// Technician All Profiles
-technicianProfileRouter.get(
-  "/",
-  technicianProfileController.getAllTechnicianProfile,
-)
-// Technician Update Profile
-technicianProfileRouter.put(
-  "/",
+  '/bookings',
   authMiddleware(Role.TECHNICIAN),
-  technicianProfileController.updateProfile,
+  technicianProfileController.getIncomingBookingRequests,
 );
 // Technician Update Availability
 technicianProfileRouter.put(
-    "/availability",
-    authMiddleware(Role.TECHNICIAN),
-    technicianProfileController.updateAvailability,
-)
+  '/availability',
+  authMiddleware(Role.TECHNICIAN),
+  technicianProfileController.updateAvailability,
+);
+// Technician Single Profile
+technicianProfileRouter.get('/:id', technicianProfileController.getTechnicianProfileById);
+// Technician All Profiles
+technicianProfileRouter.get('/', technicianProfileController.getAllTechnicianProfile);
+// Technician Update Profile
+technicianProfileRouter.put('/', authMiddleware(Role.TECHNICIAN), technicianProfileController.updateProfile);
+
 
 export default technicianProfileRouter;

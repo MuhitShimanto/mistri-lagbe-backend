@@ -1,4 +1,5 @@
 import prisma from "../../config/db.js";
+import { BookingStatus } from "../../generated/prisma/browser.js";
 import type {
   CreateTechnicianProfileInput,
   GetAllTechnicianProfilesInput,
@@ -137,6 +138,15 @@ class TechnicianProfileRepository {
       },
     });
   }
+  async getIncomingBookingRequests(technicianId: string) {
+    return prisma.booking.findMany({
+      where: {
+        technicianId,
+        status: BookingStatus.REQUESTED,
+      },
+    });
+  }
+  
 }
 
 export default new TechnicianProfileRepository();

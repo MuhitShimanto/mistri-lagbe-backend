@@ -1,4 +1,3 @@
-import prisma from "../../config/db.js";
 import technicianProfileRepository from "./technicianProfile.repository.js";
 import type { GetAllTechnicianProfilesInput, UpdateAvailabilityInput, UpdateTechnicianProfileInput } from "./technicianProfile.validation.js";
 
@@ -30,6 +29,15 @@ class TechnicianProfileService {
             throw new Error("Technician Profile Not Found");
         }
         const result = await technicianProfileRepository.getTechnicianProfileById(id);
+        return result;
+    }
+
+    getIncomingBookingRequests = async (userId: string) => {
+        const technicianId = await technicianProfileRepository.findTechnicianIdByUserId(userId);
+        if(!technicianId) {
+            throw new Error("Technician Profile Not Found");
+        }
+        const result = await technicianProfileRepository.getIncomingBookingRequests(technicianId);
         return result;
     }
 }

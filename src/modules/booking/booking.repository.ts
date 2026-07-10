@@ -1,5 +1,5 @@
 import prisma from "../../config/db.js";
-import type { Prisma } from "../../generated/prisma/client.js";
+import { BookingStatus, Role, type Prisma } from "../../generated/prisma/client.js";
 
 class BookingRepository {
   async createBooking(data: Prisma.BookingUncheckedCreateInput) {
@@ -7,6 +7,19 @@ class BookingRepository {
       data: {
         ...data,
       },
+    });
+    return result;
+  }
+  async getBookingById(id: string) {
+    const result = await prisma.booking.findUnique({
+      where: { id },
+    });
+    return result;
+  }
+  async cancelBooking(id: string) {
+    const result = await prisma.booking.update({
+      where: { id },
+      data: { status: BookingStatus.CANCELLED },
     });
     return result;
   }

@@ -5,7 +5,10 @@ import bookingController from "./booking.controller.js";
 
 const bookingRouter = Router();
 
+// Create Single Booking
 bookingRouter.post("/", authMiddleware(Role.CUSTOMER), bookingController.createBooking);
+// Cancel Booking (Own Booking + Admin can cancel any booking)
+bookingRouter.delete("/:id", authMiddleware(Role.ADMIN, Role.CUSTOMER), bookingController.cancelBooking);
 
 // To Do
 // bookingRouter.get("/", authMiddleware(Role.CUSTOMER), bookingController.getAllBookings);
