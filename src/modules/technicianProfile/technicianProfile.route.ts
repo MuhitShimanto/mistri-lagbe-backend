@@ -6,6 +6,10 @@ import technicianProfileController from "./technicianProfile.controller.js";
 const technicianProfileRouter = Router();
 
 technicianProfileRouter.get(
+  "/:id",
+  technicianProfileController.getTechnicianProfileById,
+)
+technicianProfileRouter.get(
   "/",
   technicianProfileController.getAllTechnicianProfile,
 )

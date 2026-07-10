@@ -37,6 +37,15 @@ class TechnicianProfileController {
       data: result,
     });
   }
+  getTechnicianProfileById = async (req: Request, res: Response) => {
+    const result = await technicianProfileService.getTechnicianProfileById(req.params);
+
+    res.status(200).json({
+      success: true,
+      message: "Technician profile retrieved successfully",
+      data: result,
+    });
+  }
 }
 
 export default new TechnicianProfileController();

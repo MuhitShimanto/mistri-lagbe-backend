@@ -65,6 +65,13 @@ class TechnicianProfileRepository {
           isAvailable,
         }),
 
+        // user related to this technician profile should not contain status banned
+        user: {
+          status: {
+            not: "BANNED",
+          },
+        },
+
         ...(category && {
           services: {
             some: {
@@ -84,8 +91,49 @@ class TechnicianProfileRepository {
             createdAt: "desc",
           },
 
-      include: {
-        user: true,
+      select: {
+        id: true,
+        userId: true,
+        bio: true,
+        experience: true,
+        hourlyRate: true,
+        location: true,
+        isAvailable: true,
+        user: {
+          omit: {
+            id: true,
+            password: true,
+            phone: true,
+            role: true,
+            status: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+    });
+  }
+  async getTechnicianProfileById(id: string) {
+    return prisma.technicianProfile.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        userId: true,
+        bio: true,
+        experience: true,
+        hourlyRate: true,
+        location: true,
+        isAvailable: true,
+        reviews: true,
+        services: {
+          omit: {
+            technicianId: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
       },
     });
   }

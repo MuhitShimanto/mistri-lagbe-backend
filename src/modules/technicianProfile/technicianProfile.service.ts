@@ -23,6 +23,15 @@ class TechnicianProfileService {
         const result = await technicianProfileRepository.getAllTechnicianProfiles(params);
         return result;
     }
+
+    getTechnicianProfileById = async (params: any) => {
+        const { id } = params;
+        if(!id) {
+            throw new Error("Technician Profile Not Found");
+        }
+        const result = await technicianProfileRepository.getTechnicianProfileById(id);
+        return result;
+    }
 }
 
 export default new TechnicianProfileService();
