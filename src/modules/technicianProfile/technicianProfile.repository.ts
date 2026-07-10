@@ -146,6 +146,16 @@ class TechnicianProfileRepository {
       },
     });
   }
+  async updateRequestedBookingStatus(data: { bookingId: string; status: string; technicianId: string }) {
+    return prisma.booking.update({
+      where: {
+        id: data.bookingId,
+      },
+      data: {
+        status: data.status as BookingStatus,
+      },
+    });
+  }
   
 }
 

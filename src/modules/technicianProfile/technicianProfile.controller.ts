@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import technicianProfileService from "./technicianProfile.service.js";
 import ApiError from "../../utils/ApiError.js";
+import { BookingStatus } from "../../generated/prisma/enums.js";
 
 class TechnicianProfileController {
   updateProfile = async (req: Request, res: Response) => {
@@ -51,6 +52,24 @@ class TechnicianProfileController {
     res.status(200).json({
       success: true,
       message: "Incoming booking requests retrieved successfully",
+      data: result,
+    });
+  }
+  updateRequestedBookingStatus = async (req: Request, res: Response) => {
+    const updateStatusData = {
+      bookingId: req.params.bookingId as string,
+      status: req.body.status as BookingStatus,
+      userId: req.user?.id as string,
+    }
+    if (updateStatusData.status !== BookingStatus.ACCEPTED && updateStatusData.status !== BookingStatus.DECLINED) {
+      throw new ApiError(400, "Invalid Request Status");
+    }
+
+    const result = await technicianProfileService.updateRequestedBookingStatus(updateStatusData);
+
+    res.status(200).json({
+      success: true,
+      message: "Booking status updated successfully",
       data: result,
     });
   }

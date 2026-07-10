@@ -1,3 +1,4 @@
+import type { BookingStatus } from "../../generated/prisma/enums.js";
 import technicianProfileRepository from "./technicianProfile.repository.js";
 import type { GetAllTechnicianProfilesInput, UpdateAvailabilityInput, UpdateTechnicianProfileInput } from "./technicianProfile.validation.js";
 
@@ -38,6 +39,19 @@ class TechnicianProfileService {
             throw new Error("Technician Profile Not Found");
         }
         const result = await technicianProfileRepository.getIncomingBookingRequests(technicianId);
+        return result;
+    }
+
+    updateRequestedBookingStatus = async (data: { bookingId: string, status: BookingStatus, userId: string }) => {
+        const technicianId = await technicianProfileRepository.findTechnicianIdByUserId(data.userId);
+        if(!technicianId) {
+            throw new Error("Technician Not Found");
+        }
+        const result = await technicianProfileRepository.updateRequestedBookingStatus({
+            bookingId: data.bookingId,
+            status: data.status,
+            technicianId: technicianId,
+        });
         return result;
     }
 }

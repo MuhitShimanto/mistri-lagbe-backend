@@ -11,6 +11,8 @@ technicianProfileRouter.get(
   authMiddleware(Role.TECHNICIAN),
   technicianProfileController.getIncomingBookingRequests,
 );
+// Accept or Reject Booking Request
+technicianProfileRouter.patch('/bookings/:bookingId', authMiddleware(Role.TECHNICIAN), technicianProfileController.updateRequestedBookingStatus);
 // Technician Update Availability
 technicianProfileRouter.put(
   '/availability',
