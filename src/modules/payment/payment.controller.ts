@@ -136,6 +136,25 @@ class PaymentController {
       });
     }
   };
+  getPaymentHistoryByUserId = async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const paymentHistory = await paymentService.paymentHistoryByUserId(userId as string);
+    res.status(200).json({
+      success: true,
+      message: 'Payment history retrieved successfully',
+      data: paymentHistory,
+    });
+  };
+  getPaymentByTransactionId = async (req: Request, res: Response) => {
+    const { transactionId } = req.params;
+    const user = req.user as User;
+    const paymentRecord = await paymentService.paymentByTransactionId(transactionId as string, user);
+    res.status(200).json({
+      success: true,
+      message: 'Payment record retrieved successfully',
+      data: paymentRecord,
+    });
+  }
 }
 
 export default new PaymentController();

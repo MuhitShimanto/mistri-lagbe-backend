@@ -48,6 +48,17 @@ class PaymentRepository {
     });
     return result;
   }
+  async getPaymentHistoryByUserId(userId: string) {
+    const result = await prisma.payment.findMany({
+      where: {
+        userId: userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    return result;
+  }
 }
 
 export default new PaymentRepository();

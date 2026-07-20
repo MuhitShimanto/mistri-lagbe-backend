@@ -9,9 +9,9 @@ const paymentRouter = Router();
 paymentRouter.post("/create-payment-intent", authMiddleware(Role.ADMIN, Role.CUSTOMER),paymentController.createPaymentIntent);
 // Check Successful Payment
 paymentRouter.post("/verify", paymentController.handlePaymentVerify);
-// Check Failed Payment
-// paymentRouter.get("/fail", authMiddleware(Role.ADMIN, Role.CUSTOMER), paymentController.handlePaymentFail);
-// Check Cancelled Payment
-// paymentRouter.get("/cancel", authMiddleware(Role.ADMIN, Role.CUSTOMER), paymentController.handlePaymentCancel);
+// Get Payment History for a User
+paymentRouter.get("/transactions", authMiddleware(Role.ADMIN, Role.CUSTOMER), paymentController.getPaymentHistoryByUserId);
+// Get Payment Details by Transaction ID
+paymentRouter.get("/transactions/:transactionId", authMiddleware(Role.ADMIN, Role.CUSTOMER), paymentController.getPaymentByTransactionId);
 
 export default paymentRouter;
