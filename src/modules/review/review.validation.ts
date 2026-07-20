@@ -51,9 +51,9 @@ export const updateReviewSchema = z.object({
 
 export type CreateReviewInput = z.infer<
   typeof createReviewSchema
->;
+>["body"];
 
 
 export type UpdateReviewInput = z.infer<
   typeof updateReviewSchema
->;
+>["body"];

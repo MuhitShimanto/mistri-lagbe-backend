@@ -1,18 +1,20 @@
+import prisma from "../../config/db.js";
+
 class ReviewRepository {
   async createReview(data: any) {
     await prisma.$transaction(async (tx) => {
       const review = await tx.review.create({
         data: {
-          bookingId,
-          customerId,
-          technicianId,
-          rating,
-          comment,
+          bookingId: data.bookingId,
+          customerId: data.customerId,
+          technicianId: data.technicianId,
+          rating: data.rating,
+          comment: data.comment,
         },
       });
 
       const booking = await tx.booking.findUniqueOrThrow({
-        where: { id: bookingId },
+        where: { id: data.bookingId },
         select: { serviceId: true },
       });
 
@@ -38,3 +40,5 @@ class ReviewRepository {
     });
   }
 }
+
+export default new ReviewRepository();
