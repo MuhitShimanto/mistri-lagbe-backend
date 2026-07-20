@@ -2,11 +2,12 @@ import type { Request, Response } from 'express';
 import config from '../../config/index.js';
 import bookingService from '../booking/booking.service.js';
 import ApiError from '../../utils/ApiError.js';
-import { PaymentProvider, PaymentStatus, type User } from '../../generated/prisma/client.js';
+import { BookingStatus, PaymentProvider, PaymentStatus, type User } from '../../generated/prisma/client.js';
 import authRepository from '../auth/auth.repository.js';
 import SSLCommerzPayment from 'sslcommerz-lts';
 import paymentService from './payment.service.js';
 import axios from 'axios';
+import technicianProfileService from '../technicianProfile/technicianProfile.service.js';
 
 const store_id = config.sslCommerz.store_id;
 const store_passwd = config.sslCommerz.store_passwd;
@@ -97,8 +98,6 @@ class PaymentController {
         `https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?val_id=${req.body.val_id}&store_id=${config.sslCommerz.store_id}&store_passwd=${config.sslCommerz.store_passwd}&v=1&format=json`,
       );
 
-      console.log(validateResponse.data);
-
       // Status "VALID"
       if (validateResponse.data.status === 'VALID') {
         // Update the payment status to SUCCESS
@@ -114,6 +113,7 @@ class PaymentController {
           payload.paidAt,
           validateResponse.data,
         );
+        await technicianProfileService.updateRequestedBookingStatus({bookingId: bookingId as string, status: BookingStatus.PAID, userId: paymentRecord.userId});
         res.status(200).json({
           success: true,
           message: 'Payment verified successfully',

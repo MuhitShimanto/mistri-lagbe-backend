@@ -1,6 +1,5 @@
-import type { BookingStatus } from "../../generated/prisma/enums.js";
-import paymentController from "../payment/payment.controller.js";
-import paymentService from "../payment/payment.service.js";
+import { BookingStatus } from "../../generated/prisma/enums.js";
+import bookingService from "../booking/booking.service.js";
 import technicianProfileRepository from "./technicianProfile.repository.js";
 import type { GetAllTechnicianProfilesInput, UpdateAvailabilityInput, UpdateTechnicianProfileInput } from "./technicianProfile.validation.js";
 
@@ -49,6 +48,21 @@ class TechnicianProfileService {
         if(!technicianId) {
             throw new Error("Technician Not Found");
         }
+        // Can change the status to "In Progress" only if the status is "PAID" already
+        if (data.status === BookingStatus.IN_PROGRESS) {
+            const booking = await bookingService.bookingById(data.bookingId);
+            if (booking.status !== BookingStatus.PAID) {
+                throw new Error("Cannot update booking status to In Progress unless it is already PAID");
+            }
+        }
+        // Can change the status to "Completed" only if the status is "In Progress" or "PAID" already
+        if (data.status === BookingStatus.COMPLETED) {
+            const booking = await bookingService.bookingById(data.bookingId);
+            if (booking.status !== BookingStatus.IN_PROGRESS && booking.status !== BookingStatus.PAID) {
+                throw new Error("Cannot update booking status to Completed unless it is already In Progress or PAID");
+            }
+        }
+
         const result = await technicianProfileRepository.updateRequestedBookingStatus({
             bookingId: data.bookingId,
             status: data.status,

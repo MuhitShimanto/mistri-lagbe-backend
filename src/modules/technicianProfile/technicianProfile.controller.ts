@@ -61,9 +61,6 @@ class TechnicianProfileController {
       status: req.body.status as BookingStatus,
       userId: req.user?.id as string,
     }
-    if (updateStatusData.status !== BookingStatus.ACCEPTED && updateStatusData.status !== BookingStatus.DECLINED) {
-      throw new ApiError(400, "Invalid Request Status");
-    }
 
     const result = await technicianProfileService.updateRequestedBookingStatus(updateStatusData);
 
