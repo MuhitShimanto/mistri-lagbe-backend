@@ -1,4 +1,6 @@
 import type { BookingStatus } from "../../generated/prisma/enums.js";
+import paymentController from "../payment/payment.controller.js";
+import paymentService from "../payment/payment.service.js";
 import technicianProfileRepository from "./technicianProfile.repository.js";
 import type { GetAllTechnicianProfilesInput, UpdateAvailabilityInput, UpdateTechnicianProfileInput } from "./technicianProfile.validation.js";
 
@@ -54,6 +56,7 @@ class TechnicianProfileService {
         });
         return result;
     }
+
 }
 
 export default new TechnicianProfileService();

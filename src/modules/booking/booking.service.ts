@@ -40,6 +40,13 @@ class BookingService {
     const result = await bookingRepository.cancelBooking(bookingId);
     return result;
   }
+  bookingById = async (bookingId: string) => {
+    const booking = await bookingRepository.getBookingById(bookingId);
+    if (!booking) {
+      throw new ApiError(404, "Booking not found");
+    }
+    return booking;
+  }
 }
 
 export default new BookingService();

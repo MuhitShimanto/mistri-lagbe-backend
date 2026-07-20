@@ -9,9 +9,11 @@ model Payment {
 
   amount Float
 
-  method PaymentMethod
+  method String
 
   provider PaymentProvider
+
+  meta Json?
 
   status PaymentStatus @default(PENDING)
 

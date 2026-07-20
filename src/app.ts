@@ -7,6 +7,7 @@ import technicianProfileRouter from "./modules/technicianProfile/technicianProfi
 import categoryRouter from "./modules/category/category.route.js";
 import serviceRouter from "./modules/service/service.route.js";
 import bookingRouter from "./modules/booking/booking.route.js";
+import paymentRouter from "./modules/payment/payment.route.js";
 
 
 const app: Application = express();
@@ -31,6 +32,7 @@ app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/technician-profile", technicianProfileRouter);
 app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/bookings", bookingRouter);
+app.use("/api/v1/payments", paymentRouter);
 
 // 404 Handler
 app.use((_req: Request, res: Response) => {
