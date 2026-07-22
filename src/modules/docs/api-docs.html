@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mistri-lagbe - API Documentation</title>
+    <style>
+        body { margin: 0; padding: 0; }
+        #opencollection-container { width: 100vw; height: 100vh; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.opencollection.com/docs.css">
+    <script src="https://cdn.opencollection.com/docs.js"></script>
+</head>
+<body>
+    <div id="opencollection-container"></div>
+    <script>
+        const collectionData = "opencollection: 1.0.0\ninfo:\n  name: mistri-lagbe\nconfig:\n  proxy:\n    inherit: true\n    config:\n      protocol: http\n      hostname: ''\n      port: ''\n      auth:\n        username: ''\n        password: ''\n      bypassProxy: ''\nitems:\n  - info:\n      name: auth\n      type: folder\n      seq: 1\n    request:\n      auth: inherit\n    items:\n      - info:\n          name: register user\n          type: http\n          seq: 1\n        http:\n          method: POST\n          url: '{{baseUrl}}/api/v1/auth/register'\n          body:\n            type: json\n            data: |-\n              {\n                  \"name\": \"technician1\",\n                  \"email\": \"technician1@test.com\",\n                  \"password\": \"Password123\",\n                  \"phone\": \"01200000000\",\n                  \"role\": \"TECHNICIAN\",\n                  \"address\": \"Banani\", \n                  \"city\": \"Dhaka\"\n              }\n          auth: inherit\n        settings:\n          encodeUrl: true\n          timeout: 0\n          followRedirects: true\n          maxRedirects: 5\n        docs: |-\n\n          Creates a new user account.\n\n          ## Authorization\n\n          No authorization required.\n\n          ## Validation Rules\n\n          - Name is required and must be at least 2 characters.\n          - Email is required, must be a valid email address, and is stored in lowercase.\n          - Password is required and must be at least 8 characters.\n          - Phone is optional.\n          - Address is optional.\n          - City is optional.\n          - Role is optional and defaults to `CUSTOMER`.\n          - Role must be one of the supported user roles.\n          - Registration as `ADMIN` is not allowed.\n\n          ## Response\n\n          - Returns the newly created user and authentication tokens on success.\n          - Returns a validation error if the request body is invalid.\n          - Returns a conflict error if the email is already registered.\n      - info:\n          name: login user\n          type: http\n          seq: 2\n        http:\n          method: POST\n          url: '{{baseUrl}}/api/v1/auth/login'\n          body:\n            type: json\n            data: |-\n              {\n                  \"email\": \"admin1@test.com\",\n                  \"password\": \"Password123\"\n              }\n          auth: inherit\n        settings:\n          encodeUrl: true\n          timeout: 0\n          followRedirects: true\n          maxRedirects: 5\n        docs: |-\n\n          Authenticates a user using their email and password.\n\n          ## Authorization\n\n          No authorization required.\n\n          ## Validation Rules\n\n          - Email is required, must be a valid email address, and is stored in lowercase.\n          - Password is required and cannot be empty.\n\n          ## Response\n\n          - Returns access and refresh tokens on successful authentication.\n          - Returns an authentication error if the email or password is incorrect.\n          - Returns a validation error if the request body is invalid.\n      - info:\n          name: refresh-token\n          type: http\n          seq: 3\n        http:\n          method: POST\n          url: '{{baseUrl}}/api/v1/auth/refresh'\n          auth: inherit\n        settings:\n          encodeUrl: true\n          timeout: 0\n          followRedirects: true\n          maxRedirects: 5\n        docs: |-\n\n          Generates a new access token and refresh token using a valid refresh token.\n\n          ## Authorization\n\n          No authorization header required.\n\n          ## Validation Rules\n\n          - A `refreshToken` cookie is required.\n          - The refresh token must be valid and not expired.\n          - The refresh token must belong to an existing user.\n\n          ## Response\n\n          - Returns a new access token and refresh token on success.\n          - Returns `401 Unauthorized` if the refresh token is missing, invalid, expired, or the associated user no longer exists.\nrequest:\n  variables:\n    - name: baseUrl\n      value: http://localhost:5999\nbundled: true\nextensions:\n  bruno:\n    ignore:\n      - node_modules\n      - .git\n    exportedAt: '2026-07-22T05:35:10.035Z'\n    exportedUsing: Bruno/3.5.3\n";
+        new window.OpenCollection({
+            target: document.getElementById('opencollection-container'),
+            opencollection: collectionData,
+            theme: 'light'
+        });
+    </script>
+</body>
+</html>

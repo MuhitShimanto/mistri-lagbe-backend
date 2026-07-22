@@ -1,4 +1,5 @@
 import { BookingStatus } from "../../generated/prisma/enums.js";
+import authRepository from "../auth/auth.repository.js";
 import bookingService from "../booking/booking.service.js";
 import technicianProfileRepository from "./technicianProfile.repository.js";
 import type { GetAllTechnicianProfilesInput, UpdateAvailabilityInput, UpdateTechnicianProfileInput } from "./technicianProfile.validation.js";
@@ -22,7 +23,24 @@ class TechnicianProfileService {
 
     getAllTechnicianProfile = async (params: GetAllTechnicianProfilesInput) => {
         const result = await technicianProfileRepository.getAllTechnicianProfiles(params);
-        return result;
+        // Destructure the result
+        const formattedResults = result.map((profile) => {
+            const {userId, id: technicianId, bio, experience, hourlyRate, location, isAvailable, user} = profile;
+            return {
+                userId,
+                technicianId,
+                name: user.name,
+                email: user.email,
+                bio,
+                address: user.address,
+                city: user.city,
+                experience,
+                hourlyRate,
+                location,
+                isAvailable
+            };
+        });
+        return formattedResults;
     }
 
     getTechnicianProfileById = async (params: any) => {
@@ -31,7 +49,23 @@ class TechnicianProfileService {
             throw new Error("Technician Profile Not Found");
         }
         const result = await technicianProfileRepository.getTechnicianProfileById(id);
-        return result;
+        if (!result) {
+            throw new Error("Technician Not Found");
+        }
+        const userProfile = await authRepository.findUserById(result.userId);
+        if (!userProfile) {
+            throw new Error("User Not Found");
+        }
+        const formattedResult = {
+            technicianId: result.id,
+            name: userProfile.name,
+            email: userProfile.email,
+            address: userProfile.address,
+            city: userProfile.city,
+            ...result,
+        };
+        delete formattedResult.id;
+        return formattedResult;
     }
 
     getIncomingBookingRequests = async (userId: string) => {

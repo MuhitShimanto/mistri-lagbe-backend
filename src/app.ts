@@ -9,6 +9,8 @@ import serviceRouter from "./modules/service/service.route.js";
 import bookingRouter from "./modules/booking/booking.route.js";
 import paymentRouter from "./modules/payment/payment.route.js";
 import reviewRouter from "./modules/review/review.route.js";
+import DocsRouter from "./modules/docs/docs.route.js";
+import userRouter from "./modules/user/user.route.js";
 
 
 const app: Application = express();
@@ -35,6 +37,8 @@ app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/bookings", bookingRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/docs", DocsRouter);
+app.use("/api/v1/users", userRouter);
 
 // 404 Handler
 app.use((_req: Request, res: Response) => {
