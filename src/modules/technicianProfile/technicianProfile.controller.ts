@@ -1,21 +1,8 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import technicianProfileService from "./technicianProfile.service.js";
-import ApiError from "../../utils/ApiError.js";
 import { BookingStatus } from "../../generated/prisma/enums.js";
 
 class TechnicianProfileController {
-  updateProfile = async (req: Request, res: Response) => {
-    const result = await technicianProfileService.updateProfile({
-        ...req.body,
-        id: req.user?.id,
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Profile updated successfully",
-      data: result,
-    });
-  };
   updateAvailability = async (req: Request, res: Response) => {
     const result = await technicianProfileService.updateAvailability({
         ...req.body,
@@ -69,6 +56,18 @@ class TechnicianProfileController {
       message: "Booking status updated successfully",
       data: result,
     });
+  }
+  updateTechnicianProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await technicianProfileService.updateProfile(req.user?.id as string, req.body);
+    res.status(200).json({
+      success: true,
+      message: "Technician profile updated successfully",
+      data: result,
+    });
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

@@ -25,7 +25,7 @@ technicianProfileRouter.get('/:id', technicianProfileController.getTechnicianPro
 // Technician All Profiles
 technicianProfileRouter.get('/', technicianProfileController.getAllTechnicianProfile);
 // Technician Update Profile
-technicianProfileRouter.put('/', authMiddleware(Role.TECHNICIAN), technicianProfileController.updateProfile);
+technicianProfileRouter.patch('/', authMiddleware(Role.TECHNICIAN), technicianProfileController.updateTechnicianProfile);
 
 
 export default technicianProfileRouter;

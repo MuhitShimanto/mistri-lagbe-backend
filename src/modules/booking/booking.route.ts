@@ -10,9 +10,9 @@ bookingRouter.post("/", authMiddleware(Role.CUSTOMER), bookingController.createB
 // Cancel Booking (Own Booking + Admin can cancel any booking)
 bookingRouter.delete("/:id", authMiddleware(Role.ADMIN, Role.CUSTOMER), bookingController.cancelBooking);
 
+bookingRouter.get("/", authMiddleware(Role.ADMIN), bookingController.getAllBookings);
+bookingRouter.get("/:id", authMiddleware(Role.CUSTOMER), bookingController.getBookingById);
 // To Do
-// bookingRouter.get("/", authMiddleware(Role.CUSTOMER), bookingController.getAllBookings);
-// bookingRouter.get("/:id", authMiddleware(Role.CUSTOMER), bookingController.getBookingById);
 // bookingRouter.put("/:id", authMiddleware(Role.CUSTOMER), bookingController.updateBooking);
 // bookingRouter.delete("/:id", authMiddleware(Role.CUSTOMER), bookingController.deleteBooking);
 

@@ -1,21 +1,21 @@
-import prisma from "../../config/db.js";
-import { BookingStatus } from "../../generated/prisma/browser.js";
+import prisma from '../../config/db.js';
+import { BookingStatus } from '../../generated/prisma/browser.js';
 import type {
   CreateTechnicianProfileInput,
   GetAllTechnicianProfilesInput,
   UpdateAvailabilityInput,
   UpdateTechnicianProfileInput,
-} from "./technicianProfile.validation.js";
+} from './technicianProfile.validation.js';
 
 class TechnicianProfileRepository {
-  async updateTechnicianProfile(data: UpdateTechnicianProfileInput) {
+  async updateTechnicianProfile(technicianId: string, data: Partial<UpdateTechnicianProfileInput>) {
+    const filteredData = Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined));
+
     return prisma.technicianProfile.update({
       where: {
-        id: data.id,
+        id: technicianId,
       },
-      data: {
-        ...data,
-      },
+      data: filteredData,
     });
   }
   async updateTechnicianAvailability(data: UpdateAvailabilityInput) {
@@ -58,7 +58,7 @@ class TechnicianProfileRepository {
         ...(location && {
           location: {
             contains: location,
-            mode: "insensitive",
+            mode: 'insensitive',
           },
         }),
 
@@ -69,7 +69,7 @@ class TechnicianProfileRepository {
         // user related to this technician profile should not contain status banned
         user: {
           status: {
-            not: "BANNED",
+            not: 'BANNED',
           },
         },
 
@@ -86,10 +86,10 @@ class TechnicianProfileRepository {
 
       orderBy: sortBy
         ? {
-            [sortBy]: "desc",
+            [sortBy]: 'desc',
           }
         : {
-            createdAt: "desc",
+            createdAt: 'desc',
           },
 
       select: {
@@ -156,7 +156,6 @@ class TechnicianProfileRepository {
       },
     });
   }
-  
 }
 
 export default new TechnicianProfileRepository();

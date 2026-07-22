@@ -55,7 +55,7 @@ class PaymentRepository {
       },
       orderBy: {
         createdAt: 'desc',
-      },
+      }
     });
     return result;
   }

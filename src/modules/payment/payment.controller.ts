@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import config from '../../config/index.js';
 import bookingService from '../booking/booking.service.js';
 import ApiError from '../../utils/ApiError.js';
@@ -81,7 +81,7 @@ class PaymentController {
     const transactionId = `${user.id}-${productId}-${timestamp}`;
     return transactionId;
   };
-  handlePaymentVerify = async (req: Request, res: Response) => {
+  handlePaymentVerify = async (req: Request, res: Response, next: NextFunction) => {
     const { status, transactionId, bookingId } = req.query;
     // Success URL
     if (status === 'success') {
@@ -92,9 +92,11 @@ class PaymentController {
       if (!paymentRecord) {
         throw new ApiError(404, 'Payment record not found');
       }
+      console.log('Payment record found:', paymentRecord);
 
       // Payment record found, validate the payment with SSLCommerz
-      const validateResponse = await axios.get(
+      try {
+        const validateResponse = await axios.get(
         `https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?val_id=${req.body.val_id}&store_id=${config.sslCommerz.store_id}&store_passwd=${config.sslCommerz.store_passwd}&v=1&format=json`,
       );
 
@@ -123,6 +125,9 @@ class PaymentController {
           success: false,
           message: 'Invalid payment',
         });
+      }
+      } catch (error) {
+        next(error);
       }
     }
     // Fail URL

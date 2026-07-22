@@ -23,6 +23,10 @@ class BookingRepository {
     });
     return result;
   }
+  async getAllBookings() {
+    const result = await prisma.booking.findMany();
+    return result;
+  }
 }
 
 export default new BookingRepository();

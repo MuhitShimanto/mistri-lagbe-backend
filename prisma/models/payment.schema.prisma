@@ -1,7 +1,7 @@
 model Payment {
   id String @id @default(uuid())
 
-  bookingId String @unique
+  bookingId String
 
   userId String
 
@@ -26,4 +26,8 @@ model Payment {
   booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 
   user User @relation(fields: [userId], references: [id])
+
+  @@index([bookingId])
+  @@index([userId])
+  @@index([status])
 }

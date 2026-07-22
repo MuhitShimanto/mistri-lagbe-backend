@@ -5,8 +5,20 @@ import { Role } from "../../generated/prisma/enums.js";
 
 const userRouter = Router();
 
+
+
+userRouter.patch("/:id", userController.updateUser)
+
+
+/*
+=================================
+ ADMIN ROUTES
+=================================
+*/
+
+// View All Users
 userRouter.get("/", authMiddleware(Role.ADMIN), userController.getAllUsers);
-// Manage User Status
+// Change User Status (ACTIVE/BANNED)
 userRouter.patch("/:id/status", authMiddleware(Role.ADMIN), userController.updateUserStatus);
 
 export default userRouter;
