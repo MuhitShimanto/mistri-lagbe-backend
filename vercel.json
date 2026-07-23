@@ -11,10 +11,5 @@
       "dest": "api/index.ts"
     }
   ],
-  "buildCommand": "npm run build",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "nodejs22.x"
-    }
-  }
+  "buildCommand": "npm run build"
 }
