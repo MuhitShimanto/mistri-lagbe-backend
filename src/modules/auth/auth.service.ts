@@ -200,7 +200,7 @@ class AuthService {
     );
     const { id: userId, name, email, phone, role, status, address, city, createdAt, updatedAt } = user;
     if (technicianProfile) {
-      const { id: technicianId, bio, experience, hourlyRate, location, isAvailable } = technicianProfile;
+      const { id: technicianId, bio, experienceYears, hourlyRate, isAvailable, skills, availability } = technicianProfile;
       return {
         userId,
         technicianId,
@@ -211,10 +211,11 @@ class AuthService {
         city,
         role,
         bio,
-        experience,
+        experienceYears,
         hourlyRate,
-        location,
         isAvailable,
+        availability,
+        skills,
         status,
         createdAt,
         updatedAt,

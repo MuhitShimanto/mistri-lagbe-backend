@@ -88,14 +88,14 @@ class TechnicianProfileService {
     }
     // Can change the status to "In Progress" only if the status is "PAID" already
     if (data.status === BookingStatus.IN_PROGRESS) {
-      const booking = await bookingService.bookingById(data.bookingId);
+      const booking = await bookingService.getBookingById(data.bookingId, data.userId);
       if (booking.status !== BookingStatus.PAID) {
         throw new Error('Cannot update booking status to In Progress unless it is already PAID');
       }
     }
     // Can change the status to "Completed" only if the status is "In Progress" or "PAID" already
     if (data.status === BookingStatus.COMPLETED) {
-      const booking = await bookingService.bookingById(data.bookingId);
+      const booking = await bookingService.getBookingById(data.bookingId, data.userId);
       if (booking.status !== BookingStatus.IN_PROGRESS && booking.status !== BookingStatus.PAID) {
         throw new Error('Cannot update booking status to Completed unless it is already In Progress or PAID');
       }

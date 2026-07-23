@@ -108,24 +108,7 @@ class TechnicianProfileRepository {
     return prisma.technicianProfile.findUnique({
       where: {
         id,
-      },
-      select: {
-        id: true,
-        userId: true,
-        bio: true,
-        experience: true,
-        hourlyRate: true,
-        location: true,
-        isAvailable: true,
-        reviews: true,
-        services: {
-          omit: {
-            technicianId: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-      },
+      }
     });
   }
   async getIncomingBookingRequests(technicianId: string) {
