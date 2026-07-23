@@ -86,7 +86,7 @@ class TechnicianProfileService {
     if (!technicianId) {
       throw new Error('Technician Not Found');
     }
-    const booking = await bookingService.getBookingById(data.bookingId, data.userId);
+    const booking = await bookingService.getBookingById(data.bookingId, technicianId);
     if(booking.technicianId !== technicianId) {
       throw new ApiError(403, 'You are not authorized to update this booking status');
     }
