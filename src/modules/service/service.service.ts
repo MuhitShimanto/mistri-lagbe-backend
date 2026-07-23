@@ -3,6 +3,7 @@ import serviceRepository from "./service.repository.js";
 import type { GetServiceInput } from "./service.validation.js";
 import technicianProfileRepository from "../technicianProfile/technicianProfile.repository.js";
 import type { ServiceUpdateInput } from "../../generated/prisma/models.js";
+import ApiError from "../../utils/ApiError.js";
 
 class serviceService {
     getAllServices = async (data: GetServiceInput) => {
@@ -13,12 +14,12 @@ class serviceService {
         const body = data.body;
         const userId = data.user?.id;
         if (!userId) {
-            throw new Error("Unauthorized");
+            throw new ApiError(401, "Unauthorized");
         }
         // Find technician Id based on the user Id
         const technicianId = await technicianProfileRepository.findTechnicianIdByUserId(userId);
         if (!technicianId) {
-            throw new Error("Unauthorized");
+            throw new ApiError(401, "Unauthorized");
         }
         const result = await serviceRepository.createService({ ...body, technicianId });
         return result;
@@ -27,11 +28,11 @@ class serviceService {
         // Check if service belongs to the technician making the request
         const technicianId = await technicianProfileRepository.findTechnicianIdByUserId(userId);
         if (!technicianId) {
-            throw new Error("Unauthorized");
+            throw new ApiError(401, "Unauthorized");
         }
         const service = await serviceRepository.getServiceById(serviceId);
         if (!service || service.technicianId !== technicianId) {
-            throw new Error("Unauthorized");
+            throw new ApiError(401, "Unauthorized");
         }
         const result = await serviceRepository.updateService(serviceId, data);
         return result;

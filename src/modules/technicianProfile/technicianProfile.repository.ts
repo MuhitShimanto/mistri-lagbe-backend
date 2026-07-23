@@ -84,6 +84,17 @@ class TechnicianProfileRepository {
         }),
       },
 
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            address: true,
+            city: true,
+          },
+        }
+      },
+
       orderBy: sortBy
         ? {
             [sortBy]: 'desc',
@@ -91,27 +102,6 @@ class TechnicianProfileRepository {
         : {
             createdAt: 'desc',
           },
-
-      select: {
-        id: true,
-        userId: true,
-        bio: true,
-        experience: true,
-        hourlyRate: true,
-        location: true,
-        isAvailable: true,
-        user: {
-          omit: {
-            id: true,
-            password: true,
-            phone: true,
-            role: true,
-            status: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-      },
     });
   }
   async getTechnicianProfileById(id: string) {

@@ -1,4 +1,5 @@
 import { BookingStatus } from '../../generated/prisma/enums.js';
+import ApiError from '../../utils/ApiError.js';
 import authRepository from '../auth/auth.repository.js';
 import bookingService from '../booking/booking.service.js';
 import technicianProfileRepository from './technicianProfile.repository.js';
@@ -22,18 +23,20 @@ class TechnicianProfileService {
     const result = await technicianProfileRepository.getAllTechnicianProfiles(params);
     // Destructure the result
     const formattedResults = result.map((profile) => {
-      const { userId, id: technicianId, bio, experience, hourlyRate, location, isAvailable, user } = profile;
+      const { userId, id: technicianId, bio, experienceYears, hourlyRate, isAvailable, skills, availability, rating, user } = profile;
       return {
         userId,
         technicianId,
         name: user.name,
         email: user.email,
         bio,
+        skills,
+        rating,
+        availability,
         address: user.address,
         city: user.city,
-        experience,
+        experienceYears,
         hourlyRate,
-        location,
         isAvailable,
       };
     });
@@ -109,7 +112,7 @@ class TechnicianProfileService {
   updateProfile = async (userId: string, data: Partial<UpdateTechnicianProfileInput>) => {
     const technicianId = await technicianProfileRepository.findTechnicianIdByUserId(userId);
     if (!technicianId) {
-      throw new Error('Technician Profile Not Found');
+      throw new ApiError(404, 'Technician Profile Not Found');
     }
     const result = await technicianProfileRepository.updateTechnicianProfile(technicianId, data);
     return result;
