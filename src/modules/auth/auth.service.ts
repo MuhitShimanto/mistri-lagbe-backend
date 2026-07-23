@@ -1,14 +1,14 @@
-import bcrypt from "bcrypt";
-import jwt, { type SignOptions } from "jsonwebtoken";
+import bcrypt from 'bcrypt';
+import jwt, { type SignOptions } from 'jsonwebtoken';
 
-import { UserStatus } from "../../generated/prisma/enums.js";
-import authRepository from "./auth.repository.js";
-import { DUMMY_PASSWORD_HASH } from "./auth.constants.js";
-import config from "../../config/index.js";
-import type { User } from "../../generated/prisma/client.js";
-import ApiError from "../../utils/ApiError.js";
-import { email } from "zod";
-import technicianProfileRepository from "../technicianProfile/technicianProfile.repository.js";
+import { UserStatus } from '../../generated/prisma/enums.js';
+import authRepository from './auth.repository.js';
+import { DUMMY_PASSWORD_HASH } from './auth.constants.js';
+import config from '../../config/index.js';
+import type { User } from '../../generated/prisma/client.js';
+import ApiError from '../../utils/ApiError.js';
+import { email } from 'zod';
+import technicianProfileRepository from '../technicianProfile/technicianProfile.repository.js';
 
 class AuthService {
   async register(payload: User) {
@@ -18,7 +18,7 @@ class AuthService {
      * Avoid exposing whether an email already exists.
      */
     if (existing) {
-      throw new Error("Unable to create account.");
+      throw new Error('Unable to create account.');
     }
 
     const hashedPassword = await bcrypt.hash(payload.password, 10);
@@ -64,21 +64,18 @@ class AuthService {
      */
     const passwordHash = user?.password ?? DUMMY_PASSWORD_HASH;
 
-    const passwordMatched = await bcrypt.compare(
-      payload.password,
-      passwordHash,
-    );
+    const passwordMatched = await bcrypt.compare(payload.password, passwordHash);
 
     if (!user || !passwordMatched) {
-      throw new Error("Invalid email or password.");
+      throw new Error('Invalid email or password.');
     }
 
     if (user.status !== UserStatus.ACTIVE) {
-      throw new Error("Account is inactive.");
+      throw new Error('Account is inactive.');
     }
 
     if (!config.jwt.secret) {
-      throw new Error("JWT secret is not configured.");
+      throw new Error('JWT secret is not configured.');
     }
 
     const accessToken = await this.generateAccessToken({
@@ -106,22 +103,22 @@ class AuthService {
       },
     };
   }
-  async refreshToken(token:string) {
+  async refreshToken(token: string) {
     if (!token) {
-      throw new ApiError(401, "Refresh token missing");
+      throw new ApiError(401, 'Refresh token missing');
     }
 
     const decoded = await this.verifyRefreshToken(token);
 
     if (!decoded?.id) {
-      console.log(decoded)
-      throw new ApiError(401, "Invalid refresh token");
+      console.log(decoded);
+      throw new ApiError(401, 'Invalid refresh token');
     }
 
     const user = await authRepository.findUserById(decoded.id);
 
     if (!user) {
-      throw new ApiError(401, "User not found");
+      throw new ApiError(401, 'User not found');
     }
 
     const accessToken = await this.generateAccessToken({
@@ -143,11 +140,7 @@ class AuthService {
   }
 
   // helper functions
-  async generateAccessToken(payload: {
-    id: string;
-    email: string;
-    role: string;
-  }) {
+  async generateAccessToken(payload: { id: string; email: string; role: string }) {
     return jwt.sign(
       {
         sub: payload.id,
@@ -157,16 +150,12 @@ class AuthService {
       config.jwt.secret,
       {
         expiresIn: config.jwt.expiresIn!,
-        issuer: "your-api",
-        audience: "your-users",
+        issuer: 'your-api',
+        audience: 'your-users',
       },
     );
   }
-  async generateRefreshToken(payload: {
-    id: string;
-    email: string;
-    role: string;
-  }) {
+  async generateRefreshToken(payload: { id: string; email: string; role: string }) {
     return jwt.sign(
       {
         id: payload.id,
@@ -176,8 +165,8 @@ class AuthService {
       config.jwt.secret,
       {
         expiresIn: config.jwt.refreshExpiresIn!,
-        issuer: "your-api",
-        audience: "your-users",
+        issuer: 'your-api',
+        audience: 'your-users',
       },
     );
   }
@@ -190,8 +179,52 @@ class AuthService {
       };
       return decoded;
     } catch (error) {
-      throw new ApiError(401, "Invalid refresh token");
+      throw new ApiError(401, 'Invalid refresh token');
     }
+  }
+  async getMe(user_id: string) {
+    const user = await authRepository.findUserById(user_id);
+    if (!user) {
+      throw new ApiError(404, 'User not found');
+    }
+    const technicianProfileId = await technicianProfileRepository.findTechnicianIdByUserId(user_id);
+    const technicianProfile = await technicianProfileRepository.getTechnicianProfileById(
+      technicianProfileId ?? '',
+    );
+    const { id: userId, name, email, phone, role, status, address, city, createdAt, updatedAt } = user;
+    if (technicianProfile) {
+      const { id: technicianId, bio, experience, hourlyRate, location, isAvailable } = technicianProfile;
+      return {
+        userId,
+        technicianId,
+        name,
+        email,
+        phone,
+        address,
+        city,
+        role,
+        bio,
+        experience,
+        hourlyRate,
+        location,
+        isAvailable,
+        status,
+        createdAt,
+        updatedAt,
+      };
+    }
+    return {
+      userId,
+      name,
+      email,
+      phone,
+      role,
+      status,
+      address,
+      city,
+      createdAt,
+      updatedAt,
+    };
   }
 }
 

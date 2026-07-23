@@ -30,18 +30,6 @@ class BookingController {
       next(error);
     }
   };
-  getAllBookings = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const result = await bookingService.getAllBookings();
-      res.status(200).json({
-        success: true,
-        message: 'Bookings fetched successfully',
-        data: result,
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
   getBookingById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.params.id) {
@@ -51,6 +39,18 @@ class BookingController {
       res.status(200).json({
         success: true,
         message: 'Booking fetched successfully',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+  getAllBookings = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await bookingService.getAllBookings();
+      res.status(200).json({
+        success: true,
+        message: 'Bookings fetched successfully',
         data: result,
       });
     } catch (error) {

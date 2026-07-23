@@ -38,17 +38,6 @@ class BookingService {
     const result = await bookingRepository.cancelBooking(bookingId);
     return result;
   };
-  bookingById = async (bookingId: string) => {
-    const booking = await bookingRepository.getBookingById(bookingId);
-    if (!booking) {
-      throw new ApiError(404, 'Booking not found');
-    }
-    return booking;
-  };
-  getAllBookings = async () => {
-    const bookings = await bookingRepository.getAllBookings();
-    return bookings;
-  };
   getBookingById = async (booking_id: string, userId: string) => {
     const booking = await bookingRepository.getBookingById(booking_id);
     if (!booking || booking.customerId !== userId) {
@@ -56,6 +45,10 @@ class BookingService {
     }
     const {id, ...bookingData} = booking;
     return {bookingId: booking.id, ...bookingData};
+  };
+  getAllBookings = async () => {
+    const bookings = await bookingRepository.getAllBookings();
+    return bookings;
   };
 }
 
