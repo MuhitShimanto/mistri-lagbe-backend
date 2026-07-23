@@ -19,7 +19,7 @@ class PaymentController {
     const userId = req.user?.id;
     const user = await authRepository.findUserById(userId as string);
     const bookingDetails = await bookingService.getBookingById(bookingId, userId as string);
-    if (!bookingDetails || bookingDetails.customerId !== userId || !user) {
+    if (!bookingDetails || bookingDetails.customerId !== userId || !user || bookingDetails.status !== BookingStatus.ACCEPTED) {
       throw new ApiError(400, 'Invalid booking or user not authorized');
     }
     const transactionId = this.generateTransactionId(user as User, bookingId);
