@@ -4,6 +4,7 @@ import type {
   GetServiceInput,
 } from "./service.validation.js";
 import { Prisma } from "../../generated/prisma/client.js"; // Import Prisma types for safety
+import type { ServiceUpdateInput } from "../../generated/prisma/models.js";
 
 class serviceRepository {
   async getAllServices(data: GetServiceInput) {
@@ -90,6 +91,20 @@ class serviceRepository {
       where: {
         id,
       },
+    });
+    return result;
+  }
+  async updateService(serviceId: string, data: Partial<ServiceUpdateInput>) {
+    // Remove the null and undefined values from the data object to prevent Prisma errors
+    const cleanedData: Partial<ServiceUpdateInput> = Object.fromEntries(
+      Object.entries(data).filter(([_, value]) => value !== null && value !== undefined)
+    );
+    
+    const result = await prisma.service.update({
+      where: {
+        id: serviceId,
+      },
+      data: cleanedData,
     });
     return result;
   }

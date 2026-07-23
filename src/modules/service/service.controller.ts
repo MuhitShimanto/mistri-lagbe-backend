@@ -26,6 +26,21 @@ class ServiceController {
       next(error);
     }
   }
+  updateService = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?.id;
+      const serviceId = req.params.serviceId as string;
+      const data = req.body;
+      const result = await serviceService.updateService(userId,serviceId, data);
+      res.status(200).json({
+        success: true,
+        message: "Service updated successfully",
+        data: result,
+      }); 
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ServiceController();

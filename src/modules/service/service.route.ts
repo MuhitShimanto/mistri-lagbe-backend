@@ -7,5 +7,7 @@ const serviceRouter = Router();
 
 serviceRouter.post("/", authMiddleware(Role.TECHNICIAN), serviceController.createService);
 serviceRouter.get("/", serviceController.getAllServices);
+serviceRouter.patch("/:serviceId", authMiddleware(Role.TECHNICIAN), serviceController.updateService);
+// serviceRouter.delete("/:serviceId", authMiddleware(Role.TECHNICIAN), serviceController.deleteService);
 
 export default serviceRouter;

@@ -1,5 +1,6 @@
 import prisma from "../../config/db.js"
 import type { createCategoryInput } from "./category.types.js";
+import type { UpdateCategoryInput } from "./category.validation.js";
 
 class CategoryRepository {
     createCategory = async (data: createCategoryInput) => {
@@ -9,6 +10,17 @@ class CategoryRepository {
     }
     getAllCategories = async () => {
         return prisma.category.findMany();
+    }
+    updateCategory = async (id: string, data: Partial<UpdateCategoryInput>) => {
+        return prisma.category.update({
+            where: { id },
+            data,
+        });
+    }
+    deleteCategory = async (id: string) => {
+        return prisma.category.delete({
+            where: { id },
+        });
     }
 }
 
