@@ -9,7 +9,12 @@ class CategoryRepository {
         });
     }
     getAllCategories = async () => {
-        return prisma.category.findMany();
+        return prisma.category.findMany({
+            omit: {
+                createdAt: true,
+                updatedAt: true,
+            }
+        });
     }
     updateCategory = async (id: string, data: Partial<UpdateCategoryInput>) => {
         return prisma.category.update({

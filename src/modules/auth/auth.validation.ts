@@ -7,6 +7,7 @@ export const registerValidationSchema = z.object({
     email: z.email().toLowerCase(),
     phone: z.string().optional(),
     password: z.string().min(8),
+    avatarUrl: z.url().optional(),
     role: z
       .enum(Object.values(Role) as [string, ...string[]])
       .refine((role) => role !== Role.ADMIN, {

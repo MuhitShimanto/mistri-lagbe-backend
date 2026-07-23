@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt, { type SignOptions } from 'jsonwebtoken';
 
-import { UserStatus } from '../../generated/prisma/enums.js';
+import { Role, UserStatus } from '../../generated/prisma/enums.js';
 import authRepository from './auth.repository.js';
 import { DUMMY_PASSWORD_HASH } from './auth.constants.js';
 import config from '../../config/index.js';
@@ -23,13 +23,18 @@ class AuthService {
 
     const hashedPassword = await bcrypt.hash(payload.password, 10);
 
+    const avatarUrl = payload.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(payload.name)}&background=random`;
+    payload.avatarUrl = avatarUrl;
+
     const user = await authRepository.createUser({
       ...payload,
       password: hashedPassword,
     });
 
     // If role is technician, create a technician profile
-    const technicianProfile = await technicianProfileRepository.createTechnicianProfile(user.id);
+    if(payload.role === Role.TECHNICIAN) {
+      await technicianProfileRepository.createTechnicianProfile(user.id);
+    }
 
     /**
      * Never return password hash.
@@ -40,8 +45,10 @@ class AuthService {
       email: user.email,
       phone: user.phone,
       role: user.role,
-      status: user.status,
-      createdAt: user.createdAt,
+      address: user.address,
+      city: user.city,
+      avatarUrl: user.avatarUrl,
+      status: user.status
     };
   }
 

@@ -5,11 +5,15 @@ model TechnicianProfile {
 
   bio String?
 
-  experience Int?
+  experienceYears Int?
 
   hourlyRate Float?
 
-  location String?
+  rating Float? @default(0)
+
+  skills String[]
+
+  availability Json?
 
   isAvailable Boolean @default(true)
 
