@@ -27,6 +27,13 @@ class BookingRepository {
     const result = await prisma.booking.findMany();
     return result;
   }
+  async updateBookingStatusAfterPayment(bookingId: string, status: BookingStatus) {
+    const result = await prisma.booking.update({
+      where: { id: bookingId },
+      data: { status },
+    });
+    return result;
+  }
 }
 
 export default new BookingRepository();

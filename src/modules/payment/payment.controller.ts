@@ -92,7 +92,6 @@ class PaymentController {
       if (!paymentRecord) {
         throw new ApiError(404, 'Payment record not found');
       }
-      console.log('Payment record found:', paymentRecord);
 
       // Payment record found, validate the payment with SSLCommerz
       try {
@@ -115,11 +114,12 @@ class PaymentController {
             payload.paidAt,
             validateResponse.data,
           );
-          await technicianProfileService.updateRequestedBookingStatus({
-            bookingId: bookingId as string,
-            status: BookingStatus.PAID,
-            userId: paymentRecord.userId,
-          });
+          // await technicianProfileService.updateRequestedBookingStatus({
+          //   bookingId: bookingId as string,
+          //   status: BookingStatus.PAID,
+          //   userId: paymentRecord.userId,
+          // });
+          await bookingService.updateBookingStatusAfterPayment(bookingId as string, BookingStatus.PAID);
           res.status(200).json({
             success: true,
             message: 'Payment verified successfully',
