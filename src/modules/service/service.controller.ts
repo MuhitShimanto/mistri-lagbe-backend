@@ -31,7 +31,7 @@ class ServiceController {
       const userId = req.user?.id;
       const serviceId = req.params.serviceId as string;
       const data = req.body;
-      const result = await serviceService.updateService(userId,serviceId, data);
+      const result = await serviceService.updateService(userId as string, serviceId, data);
       res.status(200).json({
         success: true,
         message: "Service updated successfully",

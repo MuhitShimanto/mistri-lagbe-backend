@@ -40,7 +40,7 @@ class BookingService {
   };
   getBookingById = async (booking_id: string, userId: string) => {
     const booking = await bookingRepository.getBookingById(booking_id);
-    if (!booking || booking.customerId !== userId) {
+    if (!booking || booking.customerId !== userId || booking.technicianId !== userId) {
       throw new ApiError(400, 'Invalid booking or user not authorized');
     }
     const {id, ...bookingData} = booking;
