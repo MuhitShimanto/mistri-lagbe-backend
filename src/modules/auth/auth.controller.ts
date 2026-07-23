@@ -6,7 +6,7 @@ import config from '../../config/index.js';
 
 class AuthController {
   register = async (req: Request, res: Response) => {
-    const result = await authService.register(req.validated!.body as User);
+    const result = await authService.register(req.validated?.body as User);
 
     res.status(201).json({
       success: true,
@@ -16,7 +16,7 @@ class AuthController {
   };
 
   login = async (req: Request, res: Response) => {
-    const result = await authService.login(req.validated!.body as { email: string; password: string });
+    const result = await authService.login(req.validated?.body as { email: string; password: string });
 
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,

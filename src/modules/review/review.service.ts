@@ -7,7 +7,7 @@ import type { CreateReviewInput } from './review.validation.js';
 class ReviewService {
   createReview = async (data: CreateReviewInput, user: User) => {
     // Check if the booking belongs to the user and if the booking is completed
-    const booking = await bookingService.bookingById(data.bookingId);
+    const booking = await bookingService.getBookingById(data.bookingId, user.id);
     if (!booking || booking.customerId !== user.id || booking.status !== BookingStatus.PAID) {
       throw new ApiError(400, 'Invalid booking ID or booking is not completed');
     }
