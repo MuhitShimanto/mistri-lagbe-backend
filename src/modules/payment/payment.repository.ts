@@ -14,7 +14,7 @@ class PaymentRepository {
         transactionId: data.transactionId,
         meta: data.meta || {},
         method: '',
-      } 
+      },
     });
     return result;
   }
@@ -27,23 +27,34 @@ class PaymentRepository {
     return result;
   }
   async getPaymentByBookingId(bookingId: string) {
-    const result = await prisma.payment.findUnique({
+    const result = await prisma.payment.findFirst({
       where: {
-        bookingId: bookingId,
+        bookingId,
+        status: 'PENDING',
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
+
     return result;
   }
-  async updatePaymentStatus(transactionId: string, status: PaymentStatus, method: string, paidAt: Date, meta: any) {
+  async updatePaymentStatus(
+    transactionId: string,
+    status: PaymentStatus,
+    method: string,
+    paidAt: Date | null,
+    meta: any,
+  ) {
     const result = await prisma.payment.update({
       where: {
-        transactionId: transactionId,
+        transactionId,
       },
       data: {
-        status: status,
-        method: method,
-        paidAt: paidAt,
-        meta: meta,
+        status,
+        method,
+        paidAt,
+        meta,
       },
     });
     return result;
@@ -55,7 +66,7 @@ class PaymentRepository {
       },
       orderBy: {
         createdAt: 'desc',
-      }
+      },
     });
     return result;
   }

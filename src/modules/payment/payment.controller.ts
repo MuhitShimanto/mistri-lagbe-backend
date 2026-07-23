@@ -18,7 +18,7 @@ class PaymentController {
     const { bookingId } = req.body;
     const userId = req.user?.id;
     const user = await authRepository.findUserById(userId as string);
-    const bookingDetails = await bookingService.bookingById(bookingId);
+    const bookingDetails = await bookingService.getBookingById(bookingId, userId as string);
     if (!bookingDetails || bookingDetails.customerId !== userId || !user) {
       throw new ApiError(400, 'Invalid booking or user not authorized');
     }
@@ -97,47 +97,70 @@ class PaymentController {
       // Payment record found, validate the payment with SSLCommerz
       try {
         const validateResponse = await axios.get(
-        `https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?val_id=${req.body.val_id}&store_id=${config.sslCommerz.store_id}&store_passwd=${config.sslCommerz.store_passwd}&v=1&format=json`,
-      );
-
-      // Status "VALID"
-      if (validateResponse.data.status === 'VALID') {
-        // Update the payment status to SUCCESS
-        const payload = {
-          status: PaymentStatus.COMPLETED,
-          method: validateResponse.data.card_type || 'N/A',
-          paidAt: new Date(validateResponse.data.tran_date),
-        };
-        await paymentService.updatePaymentStatus(
-          transactionId as string,
-          payload.status,
-          payload.method,
-          payload.paidAt,
-          validateResponse.data,
+          `https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?val_id=${req.body.val_id}&store_id=${config.sslCommerz.store_id}&store_passwd=${config.sslCommerz.store_passwd}&v=1&format=json`,
         );
-        await technicianProfileService.updateRequestedBookingStatus({bookingId: bookingId as string, status: BookingStatus.PAID, userId: paymentRecord.userId});
-        res.status(200).json({
-          success: true,
-          message: 'Payment verified successfully',
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Invalid payment',
-        });
-      }
+
+        // Status "VALID"
+        if (validateResponse.data.status === 'VALID') {
+          // Update the payment status to SUCCESS
+          const payload = {
+            status: PaymentStatus.COMPLETED,
+            method: validateResponse.data.card_type || 'N/A',
+            paidAt: new Date(validateResponse.data.tran_date),
+          };
+          await paymentService.updatePaymentStatus(
+            transactionId as string,
+            payload.status,
+            payload.method,
+            payload.paidAt,
+            validateResponse.data,
+          );
+          await technicianProfileService.updateRequestedBookingStatus({
+            bookingId: bookingId as string,
+            status: BookingStatus.PAID,
+            userId: paymentRecord.userId,
+          });
+          res.status(200).json({
+            success: true,
+            message: 'Payment verified successfully',
+          });
+        } else {
+          res.status(400).json({
+            success: false,
+            message: 'Invalid payment',
+          });
+        }
       } catch (error) {
         next(error);
       }
     }
     // Fail URL
     else {
+      const validateResponse = await axios.get(
+        `https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?val_id=${req.body.val_id}&store_id=${config.sslCommerz.store_id}&store_passwd=${config.sslCommerz.store_passwd}&v=1&format=json`,
+      );
+      const tranDate = validateResponse.data.tran_date;
+
+      const payload = {
+        status: PaymentStatus.FAILED,
+        method: validateResponse.data.card_type || 'N/A',
+        paidAt: tranDate ? new Date(tranDate) : null,
+        meta: validateResponse.data,
+      };
+      // Update the payment status & create a fresh payment record for retry
+      await paymentService.updatePaymentStatus(
+        transactionId as string,
+        payload.status,
+        payload.method,
+        payload.paidAt,
+        payload.meta,
+      );
       res.status(400).json({
         success: false,
         message: 'Payment failed',
         data: {
           redirectUrl: `${config.appUrl}/payment/failure?transactionId=${transactionId}&bookingId=${bookingId}`,
-        }
+        },
       });
     }
   };
@@ -159,7 +182,7 @@ class PaymentController {
       message: 'Payment record retrieved successfully',
       data: paymentRecord,
     });
-  }
+  };
 }
 
 export default new PaymentController();

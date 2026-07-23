@@ -36,7 +36,7 @@ class PaymentService {
     transactionId: string,
     status: PaymentStatus,
     method: string,
-    paidAt: Date,
+    paidAt: Date | null,
     meta: any,
   ) => {
     const updatedPayment = await paymentRepository.updatePaymentStatus(
