@@ -1,10 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import serviceService from "./service.service.js";
+import type { GetServiceInput } from "./service.validation.js";
 
 class ServiceController {
   getAllServices = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await serviceService.getAllServices(req);
+        const result = await serviceService.getAllServices(req.query as GetServiceInput);
         res.status(200).json({
             success: true,
             message: "Services retrieved successfully",

@@ -7,6 +7,7 @@ import ApiError from "../../utils/ApiError.js";
 
 class serviceService {
     getAllServices = async (data: GetServiceInput) => {
+        console.log(data);
         const result = await serviceRepository.getAllServices(data);
         return result;
     }

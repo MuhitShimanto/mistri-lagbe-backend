@@ -1,105 +1,62 @@
-import { z } from "zod";
-
+import { z } from 'zod';
 
 export const createServiceSchema = z.object({
   body: z.object({
-
     name: z
       .string({
-        error: "Service name is required",
+        error: 'Service name is required',
       })
-      .min(2, "Service name must be at least 2 characters")
-      .max(100, "Service name cannot exceed 100 characters"),
+      .min(2, 'Service name must be at least 2 characters')
+      .max(100, 'Service name cannot exceed 100 characters'),
 
-
-    description: z
-      .string()
-      .max(1000, "Description cannot exceed 1000 characters")
-      .optional(),
-
+    description: z.string().max(1000, 'Description cannot exceed 1000 characters').optional(),
 
     price: z
       .number({
-        error: "Price is required",
+        error: 'Price is required',
       })
-      .positive("Price must be greater than 0"),
-
+      .positive('Price must be greater than 0'),
 
     duration: z
       .number()
-      .int("Duration must be an integer")
-      .positive("Duration must be greater than 0")
+      .int('Duration must be an integer')
+      .positive('Duration must be greater than 0')
       .optional(),
-
 
     categoryId: z
       .string({
-        error: "Category ID is required",
+        error: 'Category ID is required',
       })
-      .uuid("Invalid category ID"),
-
+      .uuid('Invalid category ID'),
   }),
 });
 
-
 export const updateServiceSchema = z.object({
   body: z.object({
+    name: z.string().min(2).max(100).optional(),
 
-    name: z
-      .string()
-      .min(2)
-      .max(100)
-      .optional(),
+    description: z.string().max(1000).optional(),
 
+    price: z.number().positive().optional(),
 
-    description: z
-      .string()
-      .max(1000)
-      .optional(),
+    duration: z.number().int().positive().optional(),
 
-
-    price: z
-      .number()
-      .positive()
-      .optional(),
-
-
-    duration: z
-      .number()
-      .int()
-      .positive()
-      .optional(),
-
-
-    categoryId: z
-      .string()
-      .uuid("Invalid category ID")
-      .optional(),
-
+    categoryId: z.string().uuid('Invalid category ID').optional(),
   }),
 });
 
 export const getServiceSchema = z.object({
-  params: z.object({
-    sortBy: z.enum(["name", "createdAt", "price", "averageRating"]).optional(),
-    order: z.enum(["asc", "desc"]).optional(),
-    page: z.number().int().positive().optional(),
-    limit: z.number().int().positive().optional(),
-    category: z.enum(["service", "product"]).optional(),
-    location: z.string().optional(),
-    rating: z.number().int().min(1).max(5).optional(),
-  })
-})
+  sortBy: z.enum(['name', 'createdAt', 'price', 'averageRating']).optional(),
+  order: z.enum(['asc', 'desc']).optional(),
+  page: z.number().int().positive().optional(),
+  limit: z.number().int().positive().optional(),
+  category: z.enum(['service', 'product']).optional(),
+  location: z.string().optional(),
+  rating: z.number().int().min(1).max(5).optional(),
+});
 
-export type CreateServiceInput = z.infer<
-  typeof createServiceSchema
->["body"] & { technicianId: string };
+export type CreateServiceInput = z.infer<typeof createServiceSchema>['body'] & { technicianId: string };
 
+export type UpdateServiceInput = z.infer<typeof updateServiceSchema>;
 
-export type UpdateServiceInput = z.infer<
-  typeof updateServiceSchema
->;
-
-export type GetServiceInput = z.infer<
-  typeof getServiceSchema
->;
+export type GetServiceInput = z.infer<typeof getServiceSchema>;

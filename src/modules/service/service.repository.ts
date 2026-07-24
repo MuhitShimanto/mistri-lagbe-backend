@@ -17,7 +17,7 @@ class serviceRepository {
       category,
       location,
       rating,
-    } = data.params;
+    } = data;
 
     // 2. Build a dynamic WHERE clause
     // Using Prisma's auto-generated types ensures strict type safety
