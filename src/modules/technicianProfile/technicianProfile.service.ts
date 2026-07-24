@@ -13,7 +13,7 @@ class TechnicianProfileService {
 
   updateAvailability = async (data: UpdateAvailabilityInput) => {
     if (!data.id) {
-      throw new Error('User ID is required');
+      throw new ApiError(400, 'Technician Profile ID is required');
     }
     const result = await technicianProfileRepository.updateTechnicianAvailability(data);
     return result;
@@ -46,15 +46,15 @@ class TechnicianProfileService {
   getTechnicianProfileById = async (params: any) => {
     const { id } = params;
     if (!id) {
-      throw new Error('Technician Profile Not Found');
+      throw new ApiError(400, 'Technician Profile ID is required');
     }
     const result = await technicianProfileRepository.getTechnicianProfileById(id);
     if (!result) {
-      throw new Error('Technician Not Found');
+      throw new ApiError(404, 'Technician Profile Not Found');
     }
     const userProfile = await authRepository.findUserById(result.userId);
     if (!userProfile) {
-      throw new Error('User Not Found');
+      throw new ApiError(404, 'User Not Found');
     }
     const formattedResult = {
       technicianId: result.id,
@@ -71,7 +71,7 @@ class TechnicianProfileService {
   getIncomingBookingRequests = async (userId: string) => {
     const technicianId = await technicianProfileRepository.findTechnicianIdByUserId(userId);
     if (!technicianId) {
-      throw new Error('Technician Profile Not Found');
+      throw new ApiError(404, 'Technician Profile Not Found');
     }
     const result = await technicianProfileRepository.getIncomingBookingRequests(technicianId);
     return result;
@@ -84,7 +84,7 @@ class TechnicianProfileService {
   }) => {
     const technicianId = await technicianProfileRepository.findTechnicianIdByUserId(data.userId);
     if (!technicianId) {
-      throw new Error('Technician Not Found');
+      throw new ApiError(404, 'Technician Profile Not Found');
     }
     const booking = await bookingService.getBookingById(data.bookingId, technicianId);
     if(booking.technicianId !== technicianId) {

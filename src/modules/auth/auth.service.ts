@@ -18,7 +18,7 @@ class AuthService {
      * Avoid exposing whether an email already exists.
      */
     if (existing) {
-      throw new Error('Unable to create account.');
+      throw new ApiError(400, 'Account already exists');
     }
 
     const hashedPassword = await bcrypt.hash(payload.password, 10);
@@ -74,15 +74,15 @@ class AuthService {
     const passwordMatched = await bcrypt.compare(payload.password, passwordHash);
 
     if (!user || !passwordMatched) {
-      throw new Error('Invalid email or password.');
+      throw new ApiError(401, 'Invalid email or password');
     }
 
     if (user.status !== UserStatus.ACTIVE) {
-      throw new Error('Account is inactive.');
+      throw new ApiError(403, 'User account is Banned or Inactive. Please contact support for assistance.');
     }
 
     if (!config.jwt.secret) {
-      throw new Error('JWT secret is not configured.');
+      throw new ApiError(500, 'JWT secret is not configured.');
     }
 
     const accessToken = await this.generateAccessToken({
