@@ -5,7 +5,7 @@ import userService from "./user.service.js";
 class UserController {
     getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const result = userService.getAllUsers();
+            const result = await userService.getAllUsers();
             res.status(200).json({
                 status: "success",
                 message: "Users fetched successfully",
