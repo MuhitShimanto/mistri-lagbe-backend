@@ -81,7 +81,7 @@ export const updateServiceSchema = z.object({
 
 export const getServiceSchema = z.object({
   params: z.object({
-    sortBy: z.string().optional(),
+    sortBy: z.enum(["name", "createdAt", "price", "averageRating"]).optional(),
     order: z.enum(["asc", "desc"]).optional(),
     page: z.number().int().positive().optional(),
     limit: z.number().int().positive().optional(),
