@@ -1,50 +1,55 @@
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import express, { type Application, type Request, type Response } from "express";
-import globalErrorHandler from "./middlewares/error.middleware.js";
-import authRouter from "./modules/auth/auth.route.js";
-import technicianProfileRouter from "./modules/technicianProfile/technicianProfile.route.js";
-import categoryRouter from "./modules/category/category.route.js";
-import serviceRouter from "./modules/service/service.route.js";
-import bookingRouter from "./modules/booking/booking.route.js";
-import paymentRouter from "./modules/payment/payment.route.js";
-import reviewRouter from "./modules/review/review.route.js";
-import DocsRouter from "./modules/docs/docs.route.js";
-import userRouter from "./modules/user/user.route.js";
-
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import express, { type Application, type Request, type Response } from 'express';
+import globalErrorHandler from './middlewares/error.middleware.js';
+import authRouter from './modules/auth/auth.route.js';
+import technicianProfileRouter from './modules/technicianProfile/technicianProfile.route.js';
+import categoryRouter from './modules/category/category.route.js';
+import serviceRouter from './modules/service/service.route.js';
+import bookingRouter from './modules/booking/booking.route.js';
+import paymentRouter from './modules/payment/payment.route.js';
+import reviewRouter from './modules/review/review.route.js';
+import DocsRouter from './modules/docs/docs.route.js';
+import userRouter from './modules/user/user.route.js';
 
 const app: Application = express();
 
 // Middlewares
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors())
-app.use(cookieParser())
+app.use(cookieParser());
 
 // Health Check
-app.get("/", (_req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     success: true,
-    message: "Server is running",
+    message: 'Server is running',
   });
 });
 
 // Application Routes
-app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/categories", categoryRouter);
-app.use("/api/v1/technician-profile", technicianProfileRouter);
-app.use("/api/v1/services", serviceRouter);
-app.use("/api/v1/bookings", bookingRouter);
-app.use("/api/v1/payments", paymentRouter);
-app.use("/api/v1/reviews", reviewRouter);
-app.use("/api/v1/docs", DocsRouter);
-app.use("/api/v1/users", userRouter);
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/categories', categoryRouter);
+app.use('/api/v1/technician-profile', technicianProfileRouter);
+app.use('/api/v1/services', serviceRouter);
+app.use('/api/v1/bookings', bookingRouter);
+app.use('/api/v1/payments', paymentRouter);
+app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/docs', DocsRouter);
+app.use('/api/v1/users', userRouter);
 
 // 404 Handler
 app.use((_req: Request, res: Response) => {
   res.status(404).json({
     success: false,
-    message: "Route not found",
+    message: 'Route not found',
   });
 });
 
