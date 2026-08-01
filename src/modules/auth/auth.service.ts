@@ -118,7 +118,6 @@ class AuthService {
     const decoded = await this.verifyRefreshToken(token);
 
     if (!decoded?.id) {
-      console.log(decoded);
       throw new ApiError(401, 'Invalid refresh token');
     }
 
