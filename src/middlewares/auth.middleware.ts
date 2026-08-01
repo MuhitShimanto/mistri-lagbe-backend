@@ -36,7 +36,7 @@ export const authMiddleware = (...allowedRoles: Role[]) => {
       if (error instanceof ApiError) {
         next(error);
       } else {
-        next(new ApiError(401, "Unauthorized"));
+        next(new ApiError(401, "Token Expired"));
       }
     }
   };
