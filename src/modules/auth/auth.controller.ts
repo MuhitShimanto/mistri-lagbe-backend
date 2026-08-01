@@ -20,36 +20,52 @@ class AuthController {
   };
 
   login = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await authService.login(
-      req.validated?.body as { email: string; password: string }
-    );
+    try {
+      const result = await authService.login(req.validated?.body as { email: string; password: string });
 
-    res.cookie("accessToken", result.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: config.jwt.accessMaxAge * 60 * 1000,
-    });
+      res.cookie('accessToken', result.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? ('none' as const) : ('lax' as const),
+        maxAge: config.jwt.accessMaxAge * 60 * 1000,
+      });
 
-    res.cookie("refreshToken", result.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: config.jwt.refreshMaxAge * 24 * 60 * 60 * 1000,
-    });
+      res.cookie('refreshToken', result.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? ('none' as const) : ('lax' as const),
+        maxAge: config.jwt.refreshMaxAge * 24 * 60 * 60 * 1000,
+      });
 
-    res.status(200).json({
-      success: true,
-      message: "Login successful",
-      data: {
-        user: result.user,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      res.status(200).json({
+        success: true,
+        message: 'Login successful',
+        data: {
+          user: result.user,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+  logout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? ('none' as const) : ('lax' as const)
+      };
+      res.clearCookie('accessToken', cookieOptions);
+      res.clearCookie('refreshToken', cookieOptions);
+
+      res.status(200).json({
+        success: true,
+        message: 'Logged out successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   getMe = async (req: Request, res: Response, next: NextFunction) => {
     try {

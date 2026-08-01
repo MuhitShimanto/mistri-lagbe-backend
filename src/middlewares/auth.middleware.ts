@@ -1,24 +1,27 @@
-import type { Request, Response, NextFunction } from "express";
-import jwt, { type JwtPayload } from "jsonwebtoken";
-import { Role } from "../generated/prisma/enums.js";
-import config from "../config/index.js";
-import ApiError from "../utils/ApiError.js";
+import type { Request, Response, NextFunction } from 'express';
+import jwt, { type JwtPayload } from 'jsonwebtoken';
+import { Role } from '../generated/prisma/enums.js';
+import config from '../config/index.js';
+import ApiError from '../utils/ApiError.js';
 
 export const authMiddleware = (...allowedRoles: Role[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
+      let token: string | undefined;
+
       const authHeader = req.headers.authorization;
 
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        throw new ApiError(401, "Unauthorized: Please Login to access the resource.");
+      if (authHeader?.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+      } else if (req.cookies?.accessToken) {
+        token = req.cookies.accessToken;
       }
 
-      const token = authHeader.split(" ")[1];
+      if (!token) {
+        throw new ApiError(401, 'Unauthorized: Please Login to access the resource.');
+      }
 
-      const decoded = jwt.verify(
-        token as string,
-        config.jwt.secret,
-      ) as JwtPayload;
+      const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
 
       req.user = {
         id: decoded.sub as string,
@@ -26,9 +29,8 @@ export const authMiddleware = (...allowedRoles: Role[]) => {
         role: decoded.role as Role,
       };
 
-      // Role checking
       if (allowedRoles.length > 0 && !allowedRoles.includes(decoded.role)) {
-        throw new ApiError(403, "You do not have permission to access this resource");
+        throw new ApiError(403, 'You do not have permission to access this resource');
       }
 
       next();
@@ -36,7 +38,7 @@ export const authMiddleware = (...allowedRoles: Role[]) => {
       if (error instanceof ApiError) {
         next(error);
       } else {
-        next(new ApiError(401, "Token Expired"));
+        next(new ApiError(401, 'Token Expired'));
       }
     }
   };
