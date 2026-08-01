@@ -20,27 +20,36 @@ class AuthController {
   };
 
   login = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const result = await authService.login(req.validated?.body as { email: string; password: string });
+  try {
+    const result = await authService.login(
+      req.validated?.body as { email: string; password: string }
+    );
 
-      res.cookie('refreshToken', result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: config.jwt.refreshMaxAge * 24 * 60 * 60 * 1000,
-      });
-      res.status(200).json({
-        success: true,
-        message: 'Login successful',
-        data: {
-          accessToken: result.accessToken,
-          user: result.user,
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+    res.cookie("accessToken", result.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: config.jwt.accessMaxAge * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: config.jwt.refreshMaxAge * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      data: {
+        user: result.user,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
   getMe = async (req: Request, res: Response, next: NextFunction) => {
     try {
