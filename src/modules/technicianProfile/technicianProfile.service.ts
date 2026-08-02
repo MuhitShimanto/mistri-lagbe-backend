@@ -68,6 +68,31 @@ class TechnicianProfileService {
     return formattedResult;
   };
 
+  getUserProfileByTechnicianId = async (params: any) => {
+    const { id } = params;
+    if (!id) {
+      throw new ApiError(400, 'Technician Profile ID is required');
+    }
+    const result = await technicianProfileRepository.getTechnicianProfileById(id);
+    if (!result) {
+      throw new ApiError(404, 'Technician Profile Not Found');
+    }
+    const userProfile = await authRepository.findUserById(result.userId);
+    if (!userProfile) {
+      throw new ApiError(404, 'User Not Found');
+    }
+    const formattedResult = {
+      userId: result.userId,
+      technicianId: result.id,
+      name: userProfile.name,
+      email: userProfile.email,
+      address: userProfile.address,
+      city: userProfile.city,
+      avatarUrl: userProfile.avatarUrl,
+    };
+    return formattedResult;
+  }
+
   getIncomingBookingRequests = async (userId: string) => {
     const technicianId = await technicianProfileRepository.findTechnicianIdByUserId(userId);
     if (!technicianId) {

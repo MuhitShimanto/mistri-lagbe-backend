@@ -4,12 +4,26 @@ import type { GetServiceInput } from "./service.validation.js";
 import technicianProfileRepository from "../technicianProfile/technicianProfile.repository.js";
 import type { ServiceUpdateInput } from "../../generated/prisma/models.js";
 import ApiError from "../../utils/ApiError.js";
+import technicianProfileService from "../technicianProfile/technicianProfile.service.js";
 
 class serviceService {
     getAllServices = async (data: GetServiceInput) => {
         console.log(data);
         const result = await serviceRepository.getAllServices(data);
-        return result;
+        const formattedResults = await Promise.all(result.map(async (service) => {
+            const user = await technicianProfileService.getUserProfileByTechnicianId({ id: service.technicianId });
+            const reviewCount  = await serviceRepository.getReviewCountByServiceId(service.id);
+            return {
+                ...service,
+                reviewCount,
+                technician: {
+                    name: user.name,
+                    location: user.city,
+                    avatarUrl: user.avatarUrl,
+                }
+            };
+        }))
+        return formattedResults;
     }
     createService = async (data: Request) => {
         const body = data.body;

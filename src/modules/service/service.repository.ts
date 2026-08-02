@@ -108,6 +108,14 @@ class serviceRepository {
     });
     return result;
   }
+  async getReviewCountByServiceId(serviceId: string) {
+    const result = await prisma.booking.count({
+      where: {
+        serviceId,
+      },
+    });
+    return result;
+  }
 }
 
 export default new serviceRepository();
