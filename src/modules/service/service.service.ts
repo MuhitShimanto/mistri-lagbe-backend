@@ -67,7 +67,7 @@ class serviceService {
         const categoryObj = await categoryService.getCategoryById(service.categoryId);
         const category = categoryObj ? categoryObj.name : null;
         // Put out the reviews out of bookings and make a new array of reviews to be sent in the response
-        const reviews = service.bookings.map((booking) => booking.review).filter((review): review is NonNullable<typeof review> => !!review);
+        const reviews = service.bookings.map((booking) => booking.review).filter((review): review is NonNullable<typeof review> => !!review) || [];
         return {
             ...service,
             category,
