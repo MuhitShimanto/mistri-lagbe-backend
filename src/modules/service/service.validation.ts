@@ -50,9 +50,13 @@ export const getServiceSchema = z.object({
   order: z.enum(['asc', 'desc']).optional(),
   page: z.number().int().positive().optional(),
   limit: z.number().int().positive().optional(),
-  category: z.enum(['service', 'product']).optional(),
+  category: z.string().optional(),
   location: z.string().optional(),
   rating: z.number().int().min(1).max(5).optional(),
+  q: z.string().optional(),
+  minPrice: z.number().positive().optional(),
+  maxPrice: z.number().positive().optional(),
+  minRating: z.number().int().min(1).max(5).optional(),
 });
 
 export type CreateServiceInput = z.infer<typeof createServiceSchema>['body'] & { technicianId: string };

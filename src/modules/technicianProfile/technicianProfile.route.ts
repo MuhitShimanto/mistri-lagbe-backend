@@ -20,6 +20,8 @@ technicianProfileRouter.put(
   authMiddleware(Role.TECHNICIAN),
   technicianProfileController.updateAvailability,
 );
+// Technician Availability
+technicianProfileRouter.get('/:id/availability', technicianProfileController.getTechnicianAvailability);
 // Technician Single Profile
 technicianProfileRouter.get('/:id', technicianProfileController.getTechnicianProfileById);
 // Technician All Profiles

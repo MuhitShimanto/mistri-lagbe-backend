@@ -129,6 +129,22 @@ class TechnicianProfileRepository {
       },
     });
   }
+  async getTechnicianAvailability(technicianId: string) {
+    const technicianProfile = await prisma.technicianProfile.findUnique({
+      where: {
+        id: technicianId,
+      },
+      select: {
+        isAvailable: true,
+        availability: true,
+      },
+    });
+    if (!technicianProfile) {
+      throw new Error('Technician profile not found');
+    }
+    console.log(technicianProfile)
+    return technicianProfile;
+  }
 }
 
 export default new TechnicianProfileRepository();

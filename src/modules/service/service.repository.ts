@@ -10,6 +10,7 @@ class serviceRepository {
   async getAllServices(data: GetServiceInput) {
     // 1. Destructure with default values to fix the 'undefined' math errors
     const {
+      q,
       sortBy,
       order = "desc",
       page = 1,
@@ -17,11 +18,22 @@ class serviceRepository {
       category,
       location,
       rating,
+      minPrice,
+      maxPrice,
+      minRating,
     } = data;
 
     // 2. Build a dynamic WHERE clause
     // Using Prisma's auto-generated types ensures strict type safety
     const where: Prisma.ServiceWhereInput = {};
+
+    if(q) {
+      // Using 'contains' makes search much more flexible for users
+      where.name = {
+        contains: q,
+        mode: "insensitive", // Case-insensitive search
+      };
+    }
 
     if (category) {
       // NOTE: If 'category' is a relation table, you might need to use
@@ -44,6 +56,30 @@ class serviceRepository {
           review: {
             rating: {
               gte: Number(rating),
+            },
+          },
+        },
+      };
+    }
+
+    if(maxPrice) {
+      where.price = {
+        lte: Number(maxPrice),
+      };
+    }
+
+    if(minPrice) {
+      where.price = {
+        gte: Number(minPrice),
+      };
+    }
+
+    if(minRating) {
+      where.bookings = {
+        some: {
+          review: {
+            rating: {
+              gte: Number(minRating),
             },
           },
         },
@@ -91,6 +127,13 @@ class serviceRepository {
       where: {
         id,
       },
+      include: {
+        bookings: {
+          select: {
+            review: true,
+          }
+        }
+      }
     });
     return result;
   }

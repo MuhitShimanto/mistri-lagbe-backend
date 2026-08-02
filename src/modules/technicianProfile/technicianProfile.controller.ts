@@ -69,6 +69,15 @@ class TechnicianProfileController {
       next(error);
     }
   }
+  getTechnicianAvailability = async (req: Request, res: Response) => {
+    const result = await technicianProfileService.getTechnicianAvailability(req.params.id as string);
+
+    res.status(200).json({
+      success: true,
+      message: "Technician availability retrieved successfully",
+      data: result,
+    });
+  }
 }
 
 export default new TechnicianProfileController();

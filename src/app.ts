@@ -38,6 +38,7 @@ app.get('/', (_req: Request, res: Response) => {
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/technician-profile', technicianProfileRouter);
+app.use('/api/v1/technicians', technicianProfileRouter);
 app.use('/api/v1/services', serviceRouter);
 app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/payments', paymentRouter);

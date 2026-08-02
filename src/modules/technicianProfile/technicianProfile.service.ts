@@ -10,7 +10,6 @@ import type {
 } from './technicianProfile.validation.js';
 
 class TechnicianProfileService {
-
   updateAvailability = async (data: UpdateAvailabilityInput) => {
     if (!data.id) {
       throw new ApiError(400, 'Technician Profile ID is required');
@@ -23,7 +22,18 @@ class TechnicianProfileService {
     const result = await technicianProfileRepository.getAllTechnicianProfiles(params);
     // Destructure the result
     const formattedResults = result.map((profile) => {
-      const { userId, id: technicianId, bio, experienceYears, hourlyRate, isAvailable, skills, availability, rating, user } = profile;
+      const {
+        userId,
+        id: technicianId,
+        bio,
+        experienceYears,
+        hourlyRate,
+        isAvailable,
+        skills,
+        availability,
+        rating,
+        user,
+      } = profile;
       return {
         userId,
         technicianId,
@@ -89,9 +99,10 @@ class TechnicianProfileService {
       address: userProfile.address,
       city: userProfile.city,
       avatarUrl: userProfile.avatarUrl,
+      createdAt: userProfile.createdAt,
     };
     return formattedResult;
-  }
+  };
 
   getIncomingBookingRequests = async (userId: string) => {
     const technicianId = await technicianProfileRepository.findTechnicianIdByUserId(userId);
@@ -112,7 +123,7 @@ class TechnicianProfileService {
       throw new ApiError(404, 'Technician Profile Not Found');
     }
     const booking = await bookingService.getBookingById(data.bookingId, technicianId);
-    if(booking.technicianId !== technicianId) {
+    if (booking.technicianId !== technicianId) {
       throw new ApiError(403, 'You are not authorized to update this booking status');
     }
     // Can change the status to "In Progress" only if the status is "PAID" already
@@ -124,7 +135,10 @@ class TechnicianProfileService {
     // Can change the status to "Completed" only if the status is "In Progress" or "PAID" already
     if (data.status === BookingStatus.COMPLETED) {
       if (booking.status !== BookingStatus.IN_PROGRESS && booking.status !== BookingStatus.PAID) {
-        throw new ApiError(400, 'Cannot update booking status to Completed unless it is already In Progress or PAID');
+        throw new ApiError(
+          400,
+          'Cannot update booking status to Completed unless it is already In Progress or PAID',
+        );
       }
     }
 
@@ -142,6 +156,17 @@ class TechnicianProfileService {
       throw new ApiError(404, 'Technician Profile Not Found');
     }
     const result = await technicianProfileRepository.updateTechnicianProfile(technicianId, data);
+    return result;
+  };
+
+  getTechnicianAvailability = async (technicianId: string) => {
+    if (!technicianId) {
+      throw new ApiError(400, 'Technician Profile ID is required');
+    }
+    const result = await technicianProfileRepository.getTechnicianAvailability(technicianId);
+    if (!result) {
+      throw new ApiError(404, 'Technician Profile Not Found');
+    }
     return result;
   };
 }

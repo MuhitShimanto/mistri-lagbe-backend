@@ -19,6 +19,10 @@ class CategoryService {
         const result = await categoryRepository.deleteCategory(id);
         return result;
     }
+    getCategoryById = async (id: string) => {
+        const result = await categoryRepository.getCategoryById(id);
+        return result;
+    }
 }
 
 export default new CategoryService();

@@ -5,6 +5,7 @@ import technicianProfileRepository from "../technicianProfile/technicianProfile.
 import type { ServiceUpdateInput } from "../../generated/prisma/models.js";
 import ApiError from "../../utils/ApiError.js";
 import technicianProfileService from "../technicianProfile/technicianProfile.service.js";
+import categoryService from "../category/category.service.js";
 
 class serviceService {
     getAllServices = async (data: GetServiceInput) => {
@@ -13,8 +14,11 @@ class serviceService {
         const formattedResults = await Promise.all(result.map(async (service) => {
             const user = await technicianProfileService.getUserProfileByTechnicianId({ id: service.technicianId });
             const reviewCount  = await serviceRepository.getReviewCountByServiceId(service.id);
+            const categoryObj = await categoryService.getCategoryById(service.categoryId);
+            const category = categoryObj ? categoryObj.name : null;
             return {
                 ...service,
+                category,
                 reviewCount,
                 technician: {
                     name: user.name,
@@ -51,6 +55,32 @@ class serviceService {
         }
         const result = await serviceRepository.updateService(serviceId, data);
         return result;
+    }
+    getServiceById = async (serviceId: string) => {
+        const service = await serviceRepository.getServiceById(serviceId);
+        if (!service) {
+            throw new ApiError(404, "Service not found");
+        }
+        const user = await technicianProfileService.getUserProfileByTechnicianId({ id: service.technicianId });
+        const technicianProfile = await technicianProfileRepository.getTechnicianProfileById(service.technicianId);
+        const reviewCount  = await serviceRepository.getReviewCountByServiceId(service.id);
+        const categoryObj = await categoryService.getCategoryById(service.categoryId);
+        const category = categoryObj ? categoryObj.name : null;
+        // Put out the reviews out of bookings and make a new array of reviews to be sent in the response
+        const reviews = service.bookings.map((booking) => booking.review).filter((review): review is NonNullable<typeof review> => !!review);
+        return {
+            ...service,
+            category,
+            reviewCount,
+            reviews,
+            technician: {
+                name: user.name,
+                location: user.city,
+                avatarUrl: user.avatarUrl,
+                memberSince: technicianProfile?.createdAt || user.createdAt,
+                rating: technicianProfile?.rating || 0,
+            }
+        };
     }
 }
 

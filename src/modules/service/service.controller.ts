@@ -42,6 +42,19 @@ class ServiceController {
       next(error);
     }
   }
+  getServiceById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const serviceId = req.params.serviceId as string;
+      const result = await serviceService.getServiceById(serviceId);
+      res.status(200).json({
+        success: true,
+        message: "Service retrieved successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ServiceController();

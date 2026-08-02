@@ -16,7 +16,6 @@ categoryRouter.post(
 );
 categoryRouter.get(
   "/",
-  authMiddleware(Role.ADMIN),
   categoryController.getAllCategories,
 );
 categoryRouter.patch("/:id", authMiddleware(Role.ADMIN), categoryController.updateCategory);
