@@ -120,10 +120,11 @@ class PaymentController {
           //   userId: paymentRecord.userId,
           // });
           await bookingService.updateBookingStatusAfterPayment(bookingId as string, BookingStatus.PAID);
-          res.status(200).json({
-            success: true,
-            message: 'Payment verified successfully',
-          });
+          // res.status(200).json({
+          //   success: true,
+          //   message: 'Payment verified successfully',
+          // });
+          res.redirect(`${config.frontendUrl}/payment/success?transactionId=${transactionId}&bookingId=${bookingId}`);
         } else {
           res.status(400).json({
             success: false,
@@ -155,13 +156,14 @@ class PaymentController {
         payload.paidAt,
         payload.meta,
       );
-      res.status(400).json({
-        success: false,
-        message: 'Payment failed',
-        data: {
-          redirectUrl: `${config.appUrl}/payment/failure?transactionId=${transactionId}&bookingId=${bookingId}`,
-        },
-      });
+      // res.status(400).json({
+      //   success: false,
+      //   message: 'Payment failed',
+      //   data: {
+      //     redirectUrl: `${config.appUrl}/payment/failure?transactionId=${transactionId}&bookingId=${bookingId}`,
+      //   },
+      // });
+      res.redirect(`${config.frontendUrl}/payment/failure?transactionId=${transactionId}&bookingId=${bookingId}`);
     }
   };
   getPaymentHistoryByUserId = async (req: Request, res: Response) => {

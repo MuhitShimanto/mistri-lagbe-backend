@@ -21,6 +21,7 @@ const config = {
   port: Number(process.env.PORT) || 3000,
   appUrl: process.env.APP_URL || '',
   databaseUrl: requireEnv('DATABASE_URL'),
+  frontendUrl: process.env.FRONTEND_URL || '',
 
   // ==================================================
   // Authentication
