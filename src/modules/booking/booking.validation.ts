@@ -11,7 +11,7 @@ export const createBookingSchema = z.object({
 
     address: z.string().trim().min(5).max(255),
 
-    note: z.string().trim().max(1000).optional(),
+    note: z.string().trim().max(1000),
   }),
 });
 

@@ -13,11 +13,14 @@ class BookingService {
     const platformFee = serviceDetails.price * 0.0;
     const discount = serviceDetails.price * 0.0;
     const finalPricing = serviceDetails.price + platformFee - discount;
+    const { address, bookingDate, note, serviceId, technicianId } = body;
     const bookingData = {
-      ...body,
-      note: body.note ?? null,
+      address,
+      bookingDate,
+      note,
+      serviceId,
+      technicianId,
       customerId: userId,
-      bookingDate: new Date(),
       status: BookingStatus.REQUESTED,
       totalAmount: finalPricing,
     };
