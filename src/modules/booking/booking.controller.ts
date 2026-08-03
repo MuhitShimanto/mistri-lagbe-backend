@@ -57,6 +57,18 @@ class BookingController {
       next(error);
     }
   };
+  getMyBookings = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await bookingService.getMyBookings(req.user?.id!);
+      res.status(200).json({
+        success: true,
+        message: 'My bookings fetched successfully',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new BookingController();

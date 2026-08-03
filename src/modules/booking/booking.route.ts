@@ -11,6 +11,7 @@ bookingRouter.post("/", authMiddleware(Role.CUSTOMER), bookingController.createB
 bookingRouter.delete("/:id", authMiddleware(Role.ADMIN, Role.CUSTOMER), bookingController.cancelBooking);
 
 bookingRouter.get("/", authMiddleware(Role.ADMIN), bookingController.getAllBookings);
+bookingRouter.get("/my-bookings", authMiddleware(Role.CUSTOMER), bookingController.getMyBookings);
 bookingRouter.get("/:id", authMiddleware(Role.CUSTOMER), bookingController.getBookingById);
 // To Do
 // bookingRouter.put("/:id", authMiddleware(Role.CUSTOMER), bookingController.updateBooking);

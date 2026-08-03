@@ -60,6 +60,10 @@ class BookingService {
     const result = await bookingRepository.updateBookingStatusAfterPayment(bookingId, status);
     return result;
   };
+  getMyBookings = async (userId: string) => {
+    const bookings = await bookingRepository.getBookingsByCustomerId(userId);
+    return bookings;
+  }
 }
 
 export default new BookingService();

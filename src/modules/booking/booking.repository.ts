@@ -34,6 +34,12 @@ class BookingRepository {
     });
     return result;
   }
+  async getBookingsByCustomerId(customerId: string) {
+    const result = await prisma.booking.findMany({
+      where: { customerId },
+    });
+    return result;
+  }
 }
 
 export default new BookingRepository();
